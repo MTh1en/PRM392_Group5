@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp"
+    android:background="@android:color/white">
+
+    <!-- Ảnh logo -->
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_techgear_logo"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create your account"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join us to explore the best PC electronics"
+        android:textSize="14sp"
+        android:layout_gravity="center"
+        android:textColor="#666666"
+        android:layout_marginBottom="15dp"/>
+
+    <!-- Ô nhập Full Name -->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter your full name"
+        android:background="@android:drawable/editbox_background"
+        android:padding="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Ô nhập Email -->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter your email"
+        android:inputType="textEmailAddress"
+        android:background="@android:drawable/editbox_background"
+        android:padding="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Ô nhập Password -->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Create a password"
+        android:inputType="textPassword"
+        android:background="@android:drawable/editbox_background"
+        android:padding="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Ô nhập Confirm Password -->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Confirm your password"
+        android:inputType="textPassword"
+        android:background="@android:drawable/editbox_background"
+        android:padding="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Checkbox Điều khoản -->
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I agree to the Terms of Service and Privacy Policy"
+        android:textSize="12sp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Nút Create Account -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Create Account"
+        android:textColor="@android:color/white"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_marginBottom="15dp"/>
+
+    <!-- Chữ 'or' -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="or"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Nút Đăng nhập với Google -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Continue with Google"
+        android:background="@android:color/darker_gray"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Nút Đăng nhập với Apple -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Continue with Apple"
+        android:background="@android:color/darker_gray"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="15dp"/>
+
+    <!-- Link Sign In -->
+    <TextView
+        android:id="@+id/alSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already have an account? Sign In"
+        android:textSize="14sp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:layout_gravity="center"/>
+</LinearLayout>
