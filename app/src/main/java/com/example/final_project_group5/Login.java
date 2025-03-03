@@ -12,19 +12,20 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Login extends AppCompatActivity {
-TextView tvSignUp;
+    TextView tvSignUp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-tvSignUp = (TextView) findViewById(R.id.DntSignUp);
-tvSignUp.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent( Login.this, SignUp.class);
-        startActivity(intent);
-    }
-});
+        tvSignUp = (TextView) findViewById(R.id.DntSignUp);
+        tvSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, SignUp.class);
+                startActivity(intent);
+            }
+        });
     }
 }
