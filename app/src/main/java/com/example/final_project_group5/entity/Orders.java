@@ -1,10 +1,32 @@
 package com.example.final_project_group5.entity;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+@Entity(
+        tableName = "orders",
+        foreignKeys = {
+                @ForeignKey(entity = Users.class, parentColumns = "id", childColumns = "user_id", onDelete = ForeignKey.CASCADE)
+        },
+        indices = {@Index("user_id")}
+)
 public class Orders {
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "user_id")
     private int userId;
+
+    @ColumnInfo(name = "order_date")
     private String orderDate;
+
+    @ColumnInfo(name = "total_price")
     private double totalPrice;
+
+    @ColumnInfo(name = "status")
     private String status;
 
     public Orders() {

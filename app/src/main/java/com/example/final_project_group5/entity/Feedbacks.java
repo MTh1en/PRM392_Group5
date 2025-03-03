@@ -1,13 +1,42 @@
 package com.example.final_project_group5.entity;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+@Entity(
+        tableName = "feedbacks",
+        foreignKeys = {
+                @ForeignKey(entity = Users.class, parentColumns = "id", childColumns = "user_id", onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = Products.class, parentColumns = "id", childColumns = "product_id", onDelete = ForeignKey.CASCADE)
+        },
+        indices = {@Index("user_id"), @Index("product_id")}
+)
 public class Feedbacks {
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "user_id")
     private int userId;
+
+    @ColumnInfo(name = "product_id")
     private int productId;
+
+    @ColumnInfo(name = "content")
     private String content;
+
+    @ColumnInfo(name = "rating")
     private double rating;
+
+    @ColumnInfo(name = "created_at")
     private String createdAt;
+
+    @ColumnInfo(name = "response")
     private String response;
+
+    @ColumnInfo(name = "response_by")
     private int responseBy;
 
     public Feedbacks() {

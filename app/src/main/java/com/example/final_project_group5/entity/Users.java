@@ -1,15 +1,37 @@
 package com.example.final_project_group5.entity;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "users")
 public class Users {
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "name")
     private String name;
+
+    @ColumnInfo(name = "email")
     private String email;
+
+    @ColumnInfo(name = "password")
     private String password;
+
+    @ColumnInfo(name = "address")
     private String address;
+
+    @ColumnInfo(name = "phone")
     private String phone;
+
+    @ColumnInfo(name = "role")
     private int role;
+
+    // Constructors
     public Users() {
     }
+
     public Users(int id, String name, String email, String password, String address, String phone, int role) {
         this.id = id;
         this.name = name;
@@ -20,6 +42,7 @@ public class Users {
         this.role = role;
     }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
