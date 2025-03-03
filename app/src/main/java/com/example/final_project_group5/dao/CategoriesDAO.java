@@ -1,53 +1,34 @@
 package com.example.final_project_group5.dao;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
 
-import com.example.final_project_group5.DatabaseHelper;
 import com.example.final_project_group5.entity.Categories;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CategoriesDAO {
-    private SQLiteDatabase db;
+@Dao
+public interface CategoriesDAO {
 
-    public CategoriesDAO(Context context) {
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        this.db = dbHelper.getWritableDatabase();
-    }
+    @Insert
+    long insertCategory(Categories category);
 
-    public long insertCategory(String name) {
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        return db.insert("Categories", null, values);
-    }
+    @Update
+    int updateCategory(Categories category);
 
-    public List<Categories> getAllCategories() {
-        List<Categories> categories = new ArrayList<>();
-        Cursor cursor = db.query("Categories", null, null, null, null, null, "id ASC");
+    @Delete
+    int deleteCategory(Categories category);
 
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+    @Query("SELECT * FROM categories ORDER BY name ASC")
+    List<Categories> getAllCategories();
 
-                categories.add(new Categories(id, name));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        return categories;
-    }
-    public int updateCategory(int id, String newName) {
-        ContentValues values = new ContentValues();
-        values.put("name", newName);
-        return db.update("Categories", values, "id = ?", new String[]{String.valueOf(id)});
-    }
+    @Query("SELECT * FROM categories WHERE id = :categoryId LIMIT 1")
+    Categories getCategoryById(int categoryId);
 
-    public int deleteCategory(int id) {
-        // Xóa danh mục dựa trên id
-        return db.delete("Categories", "id = ?", new String[]{String.valueOf(id)});
-    }
+    @Query("SELECT * FROM categories WHERE name LIKE '%' || :name || '%' ORDER BY name ASC")
+    List<Categories> searchCategoriesByName(String name);
 }

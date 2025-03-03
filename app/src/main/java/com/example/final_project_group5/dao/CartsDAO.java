@@ -1,61 +1,40 @@
 package com.example.final_project_group5.dao;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
 
-import com.example.final_project_group5.DatabaseHelper;
 import com.example.final_project_group5.entity.Carts;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CartsDAO {
-    private SQLiteDatabase db;
-    public CartsDAO(Context context) {
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        this.db = dbHelper.getWritableDatabase();
-    }
+@Dao
+public interface CartsDAO {
 
-    public long insertCart(Carts cart) {
-        ContentValues values = new ContentValues();
-        values.put("user_id", cart.getUserId());
-        values.put("product_id", cart.getProductId());
-        values.put("quantity", cart.getQuantity());
-        values.put("addedAt", cart.getAddedAt());
-        return db.insert("Carts", null, values);
-    }
+    @Insert
+    long insertCart(Carts cart);
 
-    public List<Carts> getCartsByUserId(int userId) {
-        List<Carts> carts = new ArrayList<>();
-        Cursor cursor = db.query(
-                "Carts",
-                null,
-                "user_id = ?",
-                new String[]{String.valueOf(userId)},
-                null,
-                null,
-                "addedAt DESC" // Sắp xếp theo thời gian thêm sản phẩm
-        );
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-                int productId = cursor.getInt(cursor.getColumnIndexOrThrow("product_id"));
-                int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
-                String addedAt = cursor.getString(cursor.getColumnIndexOrThrow("addedAt"));
-                carts.add(new Carts(id, userId, productId, quantity, addedAt));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        return carts;
-    }
-    public int deleteCartById(int cartId) {
-        return db.delete("Carts", "id = ?", new String[]{String.valueOf(cartId)});
-    }
-    public int updateCartQuantity(int cartId, int quantity) {
-        ContentValues values = new ContentValues();
-        values.put("quantity", quantity);
-        return db.update("Carts", values, "id = ?", new String[]{String.valueOf(cartId)});
-    }
+    @Update
+    int updateCart(Carts cart);
+
+    @Delete
+    int deleteCart(Carts cart);
+
+    @Query("DELETE FROM carts WHERE user_id = :userId")
+    int clearCartByUserId(int userId);
+
+    @Query("SELECT * FROM carts WHERE user_id = :userId ORDER BY addedAt DESC")
+    LiveData<List<Carts>> getCartsByUserId(int userId);
+
+    @Query("SELECT * FROM carts WHERE user_id = :userId AND product_id = :productId LIMIT 1")
+    Carts getCartByUserAndProduct(int userId, int productId);
+
+    @Query("UPDATE carts SET quantity = :quantity WHERE user_id = :userId AND product_id = :productId")
+    int updateCartQuantity(int userId, int productId, int quantity);
+
+    @Query("SELECT SUM(quantity) FROM carts WHERE user_id = :userId")
+    LiveData<Integer> getTotalQuantityByUserId(int userId);
 }

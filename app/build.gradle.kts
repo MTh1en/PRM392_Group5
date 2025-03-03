@@ -36,7 +36,8 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.room:room-runtime:2.5.1")
+    annotationProcessor("androidx.room:room-compiler:2.5.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
