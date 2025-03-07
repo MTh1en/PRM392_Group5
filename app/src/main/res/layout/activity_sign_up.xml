@@ -37,6 +37,7 @@
 
     <!-- Ô nhập Full Name -->
     <EditText
+        android:id="@+id/etFullName"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="Enter your full name"
@@ -46,6 +47,7 @@
 
     <!-- Ô nhập Email -->
     <EditText
+        android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="Enter your email"
@@ -56,6 +58,7 @@
 
     <!-- Ô nhập Password -->
     <EditText
+        android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="Create a password"
@@ -66,6 +69,7 @@
 
     <!-- Ô nhập Confirm Password -->
     <EditText
+        android:id="@+id/etConfirmPassword"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="Confirm your password"
@@ -76,6 +80,7 @@
 
     <!-- Checkbox Điều khoản -->
     <CheckBox
+        android:id="@+id/cbTerms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="I agree to the Terms of Service and Privacy Policy"
@@ -84,6 +89,7 @@
 
     <!-- Nút Create Account -->
     <Button
+        android:id="@+id/btnCreateAccount"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Create Account"
