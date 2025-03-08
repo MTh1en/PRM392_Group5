@@ -36,11 +36,7 @@ public class CategoriesFragment extends Fragment {
         categoriesList.add(new Categories(5, "Bàn phím"));
         categoriesList.add(new Categories(6, "Chuột"));
 
-
-        adapter = new CategoriesAdapter(categoriesList, category -> {
-            // Xử lý khi click vào danh mục (Chuyển sang danh sách sản phẩm)
-        });
-
+        adapter = new CategoriesAdapter(categoriesList, getActivity());
         recyclerView.setAdapter(adapter);
 
         return view;
