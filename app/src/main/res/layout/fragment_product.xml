@@ -1,14 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
     tools:context=".ProductFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Toolbar cố định trên cùng -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="60dp"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/back" />
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:gravity="center"
+                android:text="PC Gear"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/btn_search"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/search" />
+
+            <ImageView
+                android:id="@+id/btn_cart"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_weight="1"
+                android:src="@drawable/shoppinglist" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Danh sách sản phẩm (giữ nguyên) -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="product list" />
+        android:fillViewport="true">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+
+            <!-- Lưới sản phẩm -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="3"
+                android:padding="4dp"
+                android:layout_marginBottom="16dp">
+
+                <!-- Sản phẩm 1 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="257dp"
+                    android:layout_columnWeight="1"
+                    android:background="@android:color/white"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/cpucorei5" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="CPU Intel Core i5 13600K"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:paddingTop="4dp"
+                        android:text="8.990.000đ"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="@color/black"
+                        android:text="Add to cart"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+
+                <!-- Sản phẩm 2 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@android:color/white"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/keyboard" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="37dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="RAM Kingston Fury Beast 32GB DDR5"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2.490.000đ"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:paddingTop="4dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Add to cart"
+                        android:backgroundTint="@color/black"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="8dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@android:color/white"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ramkingston" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="37dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="RAM Kingston Fury Beast 32GB DDR5"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2.490.000đ"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:paddingTop="4dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Add to cart"
+                        android:backgroundTint="@color/black"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="8dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@android:color/white"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ramkingston" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="37dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="RAM Kingston Fury Beast 32GB DDR5"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2.490.000đ"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:paddingTop="4dp" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Add to cart"
+                        android:backgroundTint="@color/black"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="8dp"/>
+                </LinearLayout>
+
+
+
+                <!-- Thêm sản phẩm khác theo cách tương tự -->
+
+            </GridLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
