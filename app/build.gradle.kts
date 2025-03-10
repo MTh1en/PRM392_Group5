@@ -37,8 +37,8 @@ android {
 }
 
 dependencies {
-    implementation("androidx.room:room-runtime:2.5.1")
-    annotationProcessor("androidx.room:room-compiler:2.5.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
