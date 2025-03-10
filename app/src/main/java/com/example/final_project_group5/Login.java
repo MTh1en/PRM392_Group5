@@ -2,20 +2,14 @@ package com.example.final_project_group5;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
-import com.example.final_project_group5.dao.UsersDAO;
-import com.example.final_project_group5.entity.AppDatabase;
-import com.example.final_project_group5.entity.Users;
-import com.example.final_project_group5.entity.AppExecutors;
+import com.example.final_project_group5.entity.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,8 +24,6 @@ public class Login extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private Button btnSignIn, btnGoogle;
     private TextView tvForgotPassword;
-    private AppDatabase appDatabase;
-    private UsersDAO usersDAO;
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -55,11 +47,6 @@ public class Login extends AppCompatActivity {
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
         // Initialize Room database
-        appDatabase = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "electronic_store.db")
-                .allowMainThreadQueries()
-                .build();
-        usersDAO = appDatabase.usersDao();
 
         // Sign Up text click listener
         tvSignUp.setOnClickListener(v -> {
@@ -76,17 +63,6 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            AppExecutors.getInstance().diskIO().execute(() -> {
-                final Users user = usersDAO.loginUser(email, password);
-                runOnUiThread(() -> {
-                    if (user != null) {
-                        handleSuccessfulLogin(user);
-                    } else {
-                        Toast.makeText(Login.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            });
         });
 
         // Google Sign-In button click listener
@@ -133,7 +109,7 @@ public class Login extends AppCompatActivity {
         finish();
     }
 
-    private void handleSuccessfulLogin(Users user) {
+    private void handleSuccessfulLogin(User user) {
         Toast.makeText(Login.this, "Welcome " + user.getName(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Login.this, MainActivity.class);
         intent.putExtra("USER_ID", user.getId());

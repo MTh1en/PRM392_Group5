@@ -11,20 +11,14 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
-import com.example.final_project_group5.dao.UsersDAO;
-import com.example.final_project_group5.entity.AppDatabase;
-import com.example.final_project_group5.entity.AppExecutors;
-import com.example.final_project_group5.entity.Users;
+import com.example.final_project_group5.entity.User;
 
 public class SignUp extends AppCompatActivity {
     private EditText etFullName, etEmail, etPassword, etConfirmPassword;
     private CheckBox cbTerms;
     private Button btnCreateAccount;
     private TextView tvSignIn;
-    private AppDatabase appDatabase;
-    private UsersDAO usersDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +34,6 @@ public class SignUp extends AppCompatActivity {
         cbTerms = findViewById(R.id.cbTerms);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         tvSignIn = findViewById(R.id.alSignIn);
-
-        // Initialize Room database
-        appDatabase = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "electronic_store.db")
-                .build();
-        usersDAO = appDatabase.usersDao();
-
-        // Sign In text click listener
         tvSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,50 +64,12 @@ public class SignUp extends AppCompatActivity {
                 }
 
                 // Create new user
-                final Users newUser = new Users();
+                final User newUser = new User();
                 newUser.setName(fullName);
                 newUser.setEmail(email);
                 newUser.setPassword(password); // Note: Should be hashed in production
-                newUser.setRole(0); // Default role (e.g., 0 for regular user)
+                newUser.setRole("CUSTOMER"); // Default role (e.g., 0 for regular user)
 
-                // Insert user in background thread
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Check for existing email
-                        Users existingUser = usersDAO.loginUser(email, password);
-                        if (existingUser != null) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SignUp.this,
-                                            "Email already registered",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            return;
-                        }
-
-                        long userId = usersDAO.insertUser(newUser);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (userId > 0) {
-                                    Toast.makeText(SignUp.this,
-                                            "Account created successfully",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(SignUp.this, Login.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(SignUp.this,
-                                            "Failed to create account",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-                });
             }
         });
     }
