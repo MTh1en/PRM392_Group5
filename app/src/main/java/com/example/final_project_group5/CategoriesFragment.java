@@ -1,7 +1,6 @@
 package com.example.final_project_group5;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,24 +9,16 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.final_project_group5.adapter.CategoryAdapter;
-import com.example.final_project_group5.api.ApiClient;
-import com.example.final_project_group5.api.ProductService;
-import com.example.final_project_group5.entity.Product;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class CategoriesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private CategoryAdapter categoryAdapter;
     private List<String> categoryList;
+    private List<Integer> categoryIconList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,38 +29,52 @@ public class CategoriesFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         categoryList = new ArrayList<>();
-        categoryAdapter = new CategoryAdapter(categoryList);
+        categoryIconList = new ArrayList<>();
+        categoryAdapter = new CategoryAdapter(getContext(), categoryList, categoryIconList);
         recyclerView.setAdapter(categoryAdapter);
 
-        fetchCategories();
+        setHardcodedCategories();
+
+        // Xử lý sự kiện click vào item
+        categoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                String selectedCategory = categoryList.get(position);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("category", selectedCategory);
+
+
+                ProductFragment productFragment = new ProductFragment();
+                productFragment.setArguments(bundle);
+
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, productFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
 
         return view;
     }
 
-    private void fetchCategories() {
-        ProductService productService = ApiClient.getClient().create(ProductService.class); // Sử dụng ApiClient
-        Call<List<Product>> call = productService.getAllProducts();
+    private void setHardcodedCategories() {
 
-        call.enqueue(new Callback<List<Product>>() {
-            @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Product> products = response.body();
-                    Set<String> uniqueCategories = new HashSet<>();
-                    for (Product product : products) {
-                        uniqueCategories.add(product.getCategory());
-                    }
-                    categoryList.addAll(uniqueCategories);
-                    categoryAdapter.notifyDataSetChanged();
+        categoryList.add("PC Gaming");
+        categoryList.add("Laptop");
+        categoryList.add("Component");
+        categoryList.add("Screen");
+        categoryList.add("Keyboard");
+        categoryList.add("Mouse");
 
-                    Log.d("Categories", categoryList.toString());
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+        categoryIconList.add(R.drawable.app_logo);
+        categoryIconList.add(R.drawable.laptop);
+        categoryIconList.add(R.drawable.processor);
+        categoryIconList.add(R.drawable.monitor);
+        categoryIconList.add(R.drawable.keyboard);
+        categoryIconList.add(R.drawable.mouse);
+
+        categoryAdapter.notifyDataSetChanged();
     }
 }
