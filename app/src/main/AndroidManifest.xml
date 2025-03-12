@@ -22,7 +22,7 @@
             android:name=".SignUp"
             android:exported="false" />
         <activity
-            android:name=".AdminDashboard"
+            android:name=".UserDashboard"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
