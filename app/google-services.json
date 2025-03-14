@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "875920214568",
+    "project_id": "electronic-feb16",
+    "storage_bucket": "electronic-feb16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875920214568:android:f62d85fc4e0d5c060bc31d",
+        "android_client_info": {
+          "package_name": "com.example.final_project_group5"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875920214568-bj2lso5ijp74l1v6ghjbn5sghkk7qish.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.final_project_group5",
+            "certificate_hash": "9981274c73f2b158e7654425bba5710d40ef7bfd"
+          }
+        },
+        {
+          "client_id": "875920214568-d0gcob8f33lk7kii3br5a3643ia3nt90.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7R7pnwMBj2YE7xHPQcGSSruhS9-3IqIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875920214568-d0gcob8f33lk7kii3br5a3643ia3nt90.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
