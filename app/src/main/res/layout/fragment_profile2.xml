@@ -10,10 +10,30 @@
     <!-- Tiêu đề -->
 
     <TextView
-        android:id="@+id/textView12"
-        android:layout_width="194dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="232dp"
+        android:id="@+id/txtActive1"
+        android:layout_width="126dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="376dp"
+        android:text="Active"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+
+    <EditText
+        android:id="@+id/txtRole2"
+        android:layout_width="213dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="304dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.897"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+
+    <EditText
+        android:id="@+id/txtActive2"
+        android:layout_width="209dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="372dp"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.897"
@@ -21,9 +41,29 @@
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
     <TextView
-        android:id="@+id/textView11"
-        android:layout_width="194dp"
-        android:layout_height="56dp"
+        android:id="@+id/txtRole1"
+        android:layout_width="126dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="304dp"
+        android:text="Role"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+
+    <EditText
+        android:id="@+id/txtPhone2"
+        android:layout_width="214dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="228dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.897"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+
+    <EditText
+        android:id="@+id/txtAddress2"
+        android:layout_width="216dp"
+        android:layout_height="59dp"
         android:layout_marginTop="160dp"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,10 +71,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="194dp"
-        android:layout_height="56dp"
+    <EditText
+        android:id="@+id/txtEmail2"
+        android:layout_width="218dp"
+        android:layout_height="57dp"
         android:layout_marginTop="88dp"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,19 +82,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="194dp"
-        android:layout_height="56dp"
+    <EditText
+        android:id="@+id/txtName2"
+        android:layout_width="218dp"
+        android:layout_height="59dp"
         android:layout_marginTop="20dp"
-        android:text="TextView"
+        android:hint="Enter your name"
+        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.897"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtPhone1"
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="232dp"
@@ -63,7 +104,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/txtAddress1"
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="160dp"
@@ -72,7 +113,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/txtEmail1"
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="88dp"
@@ -133,7 +174,7 @@
         app:layout_constraintVertical_bias="0.737" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtName1"
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="20dp"
