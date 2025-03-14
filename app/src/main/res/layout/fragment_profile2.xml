@@ -58,7 +58,7 @@
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="232dp"
-        android:text="TextView"
+        android:text="Phone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
@@ -67,7 +67,7 @@
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="160dp"
-        android:text="TextView"
+        android:text="Address"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
@@ -76,7 +76,7 @@
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="88dp"
-        android:text="TextView"
+        android:text="Email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 
@@ -137,7 +137,7 @@
         android:layout_width="126dp"
         android:layout_height="55dp"
         android:layout_marginTop="20dp"
-        android:text="TextView"
+        android:text="Name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
 </androidx.constraintlayout.widget.ConstraintLayout>
