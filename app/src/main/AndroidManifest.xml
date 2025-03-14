@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,14 +18,18 @@
 <!--        <activity-->
 <!--            android:name=".AdminDashboard"-->
 <!--            android:exported="false" />-->
-        <activity
-            android:name=".Login"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".Login"-->
+<!--            android:exported="true" />-->
         <activity
             android:name=".SignUp"
-            android:exported="false" />
+            android:exported="true" />
         <activity
+<<<<<<< HEAD
             android:name=".UserDashboard"
+=======
+            android:name=".Login"
+>>>>>>> 8bbb5fee1ff8ef20c7e13436c80a1cdcf66b853b
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

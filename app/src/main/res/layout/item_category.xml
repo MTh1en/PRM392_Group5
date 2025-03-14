@@ -1,23 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="8dp"
+    android:layout_margin="4dp"
     android:gravity="center">
 
     <ImageView
         android:id="@+id/categoryIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/app_logo"
-        android:layout_marginBottom="8dp"/>
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/app_logo" />
 
     <TextView
         android:id="@+id/categoryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        android:gravity="center" />
+        android:text="Category Name"
+        android:textColor="#3EAEF4"
+        android:textSize="14sp" />
+
 </LinearLayout>
