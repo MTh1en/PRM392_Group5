@@ -24,4 +24,5 @@ public interface UserService {
     Call<User> updateUser(@Path("id") String id, @Body User user);
     @DELETE(USERS + "/{id}")
     Call<User> deleteUser(@Path("id") String id);
+
 }
