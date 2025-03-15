@@ -1,8 +1,7 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -12,6 +11,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.final_project_group5.R;
 import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.User;

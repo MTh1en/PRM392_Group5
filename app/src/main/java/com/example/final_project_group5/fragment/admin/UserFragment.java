@@ -1,4 +1,4 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.fragment.admin;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.final_project_group5.R;
 import com.example.final_project_group5.adapter.UserAdapter;
 
 import com.example.final_project_group5.entity.User;

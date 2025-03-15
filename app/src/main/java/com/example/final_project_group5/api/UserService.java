@@ -1,5 +1,6 @@
 package com.example.final_project_group5.api;
 
+import com.example.final_project_group5.entity.Product;
 import com.example.final_project_group5.entity.User;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface UserService {
     String USERS = "User";
@@ -25,4 +27,9 @@ public interface UserService {
     @DELETE(USERS + "/{id}")
     Call<User> deleteUser(@Path("id") String id);
 
+    @GET(USERS)
+    Call<User> login(@Query("email") String email, @Query("password") String password);
+
+    @GET(USERS)
+    Call<User> loginGoogle(@Query("email") String email);
 }

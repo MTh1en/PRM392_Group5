@@ -1,7 +1,6 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,10 +9,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.final_project_group5.fragment.admin.OrderFragment;
+import com.example.final_project_group5.fragment.user.ProductFragment;
+import com.example.final_project_group5.R;
+import com.example.final_project_group5.fragment.admin.UserFragment;
 import com.example.final_project_group5.databinding.ActivityAdminDashboardBinding;
-
-
-import java.util.List;
 
 public class AdminDashboard extends AppCompatActivity {
     ActivityAdminDashboardBinding binding;

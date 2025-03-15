@@ -1,4 +1,4 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.fragment.user;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+
+import com.example.final_project_group5.R;
 
 import java.util.ArrayList;
 import java.util.List;

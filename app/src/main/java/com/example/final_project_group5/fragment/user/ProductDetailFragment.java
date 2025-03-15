@@ -1,4 +1,4 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.fragment.user;
 
 import android.os.Bundle;
 
@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.final_project_group5.R;
 
 public class ProductDetailFragment extends Fragment {
 

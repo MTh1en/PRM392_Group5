@@ -1,4 +1,4 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.fragment.user;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.final_project_group5.R;
 import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.User;
@@ -28,7 +29,7 @@ public class ProfileFragment extends Fragment {
     private ImageView imageProfile;
     private Button btnEdit;
     private UserService userService;
-    private String userId = "1"; // Cần thay bằng ID của user đang đăng nhập
+    private String userId = "2"; // Cần thay bằng ID của user đang đăng nhập
     private boolean isEditing = false;
 
     public ProfileFragment() {

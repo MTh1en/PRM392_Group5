@@ -1,4 +1,4 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.fragment.user;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.final_project_group5.R;
 import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.ProductService;
 import com.example.final_project_group5.entity.Product;

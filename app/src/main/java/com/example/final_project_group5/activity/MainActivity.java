@@ -1,16 +1,18 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.final_project_group5.fragment.user.ProfileFragment;
+import com.example.final_project_group5.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 public class MainActivity extends AppCompatActivity {
-
     private TextView tvWelcome;
     private Button btnLogout;
     private GoogleSignInClient mGoogleSignInClient;

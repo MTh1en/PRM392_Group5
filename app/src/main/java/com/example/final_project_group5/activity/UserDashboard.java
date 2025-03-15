@@ -1,4 +1,4 @@
-package com.example.final_project_group5;
+package com.example.final_project_group5.activity;
 
 import android.os.Bundle;
 
@@ -8,6 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.final_project_group5.fragment.user.CartFragment;
+import com.example.final_project_group5.fragment.user.CategoriesFragment;
+import com.example.final_project_group5.fragment.user.HomeFragment;
+import com.example.final_project_group5.fragment.user.ProfileFragment;
+import com.example.final_project_group5.R;
 import com.example.final_project_group5.databinding.ActivityUserDashboardBinding;
 
 public class UserDashboard extends AppCompatActivity {
