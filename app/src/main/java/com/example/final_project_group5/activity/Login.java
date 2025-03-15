@@ -2,10 +2,12 @@ package com.example.final_project_group5.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,6 +23,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -86,16 +91,16 @@ public class Login extends AppCompatActivity {
     }
 
     private void authenticateWithMockAPI(String email, String password) {
-        Call<User> call = UserRepo.getUserService().login(email, password);
-        call.enqueue(new Callback<User>() {
+        Log.d("Login", "Email: " + email + ", Password: " + password);
+        UserRepo.getUserService().login(email, password).enqueue(new Callback<List<User>>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    User user = response.body();
-                    if (user.isActive()) {
-                        if (user.getPassword().equals(password)) {
-                            Toast.makeText(Login.this, "MockAPI login successful", Toast.LENGTH_SHORT).show();
-                            handleSuccessfulLogin(user);
+                    List<User> user = response.body();
+                    User matchedUser = user.get(0);
+                    if (user.get(0).isActive()) {
+                        if ((user.get(0).getPassword().equals(password))) {
+                            handleSuccessfulLogin(matchedUser);
                         } else {
                             Toast.makeText(Login.this, "Invalid password", Toast.LENGTH_SHORT).show();
                         }
@@ -103,13 +108,13 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, "User is banned", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Login.this, "Failed to fetch users: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Login Failed " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(Login.this, "Login Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(Login.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -138,32 +143,22 @@ public class Login extends AppCompatActivity {
         String email = account.getEmail();
         String name = account.getDisplayName();
 
-        UserRepo.getUserService().getAllUsers().enqueue(new Callback<List<User>>() {
+        UserRepo.getUserService().loginGoogle(email).enqueue(new Callback<List<User>>() {
+
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                Log.d("Login", "Email: " + email);
                 if (response.isSuccessful() && response.body() != null) {
                     List<User> users = response.body();
-                    User matchedUser = null;
-                    for (User user : users) {
-                        if (user.getEmail().equals(email)) {
-                            matchedUser = user;
-                            break;
-                        }
-                    }
-                    if (matchedUser != null) {
-                        Toast.makeText(Login.this, "Google user found in MockAPI", Toast.LENGTH_SHORT).show();
-                        handleSuccessfulLogin(matchedUser);
-                    } else {
-                        Toast.makeText(Login.this, "Google user not found, creating new user", Toast.LENGTH_SHORT).show();
-                        User newUser = new User();
-                        newUser.setEmail(email);
-                        newUser.setName(name);
-                        newUser.setRole("CUSTOMER");
-                        newUser.setActive(true);
-                        createUserInMockAPI(newUser);
-                    }
+                    handleSuccessfulLogin(users.get(0));
                 } else {
-                    Toast.makeText(Login.this, "Failed to fetch users: " + response.code(), Toast.LENGTH_SHORT).show();
+                    User newUser = new User();
+                    newUser.setEmail(email);
+                    newUser.setName(name);
+                    newUser.setRole("CUSTOMER");
+                    newUser.setActive(true);
+                    newUser.setCreateAt(LocalDateTime.now().toString());
+                    createUserInMockAPI(newUser);
                 }
             }
 
@@ -194,11 +189,19 @@ public class Login extends AppCompatActivity {
     }
 
     private void handleSuccessfulLogin(User user) {
-        Intent intent = new Intent(Login.this, MainActivity.class);
-        intent.putExtra("USER_EMAIL", user.getEmail());
-        intent.putExtra("USER_NAME", user.getName());
-        intent.putExtra("USER_ROLE", "admin".equalsIgnoreCase(user.getRole()) ? 1 : 0);
-        startActivity(intent);
+        if (user.getRole().equals("ADMIN")){
+            Intent intent = new Intent(Login.this, AdminDashboard.class);
+            intent.putExtra("USER_ID", user.getId());
+            intent.putExtra("USER_EMAIL", user.getEmail());
+            intent.putExtra("USER_NAME", user.getName());
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(Login.this, UserDashboard.class);
+            intent.putExtra("USER_ID", user.getId());
+            intent.putExtra("USER_EMAIL", user.getEmail());
+            intent.putExtra("USER_NAME", user.getName());
+            startActivity(intent);
+        }
         finish();
     }
 }

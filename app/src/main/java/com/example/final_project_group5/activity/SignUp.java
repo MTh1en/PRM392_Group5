@@ -16,6 +16,8 @@ import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.User;
 
+import java.time.LocalDateTime;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,9 +74,10 @@ public class SignUp extends AppCompatActivity {
             User newUser = new User();
             newUser.setName(fullName);
             newUser.setEmail(email);
-            newUser.setPassword(password); // Should be hashed in production
+            newUser.setPassword(password);
             newUser.setRole("CUSTOMER");
             newUser.setActive(true);
+            newUser.setCreateAt(LocalDateTime.now().toString());
 
             // Save to MockAPI
             userService.createUser(newUser).enqueue(new Callback<User>() {
