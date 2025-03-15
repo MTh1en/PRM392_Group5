@@ -8,13 +8,14 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriesFragment extends Fragment {
 
-    private GridLayout categoriesContainer; // Thay LinearLayout bằng GridLayout
+    private GridLayout categoriesContainer;
     private List<String> categoryList;
     private List<Integer> categoryIconList;
 
@@ -75,17 +76,30 @@ public class CategoriesFragment extends Fragment {
                     ProductFragment productFragment = new ProductFragment();
                     productFragment.setArguments(bundle);
 
+                    // Code cũ: Giữ nguyên để ghi nhận
+                    /*
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, productFragment)
                             .addToBackStack(null)
                             .commit();
+                    */
+
+                    // Code mới: Làm sạch back stack trước khi chuyển fragment
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    // Xóa tất cả fragment trong back stack
+                    for (int j = 0; j < fragmentManager.getBackStackEntryCount(); j++) {
+                        fragmentManager.popBackStack();
+                    }
+                    // Thêm ProductFragment mà không thêm vào back stack
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, productFragment)
+                            .commit();
                 }
             });
 
-
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f); // Mỗi item chiếm 1 cột với trọng số đều
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
             categoryLayout.setLayoutParams(params);
 
             categoriesContainer.addView(categoryLayout);

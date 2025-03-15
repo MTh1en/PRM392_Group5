@@ -38,6 +38,8 @@ public class UserDashboard extends AppCompatActivity {
                 replaceFragment(new ProfileFragment());
                 return true;
             }
+
+
             return false;
         });
     }

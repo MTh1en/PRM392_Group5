@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -45,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up logout button
         btnLogout.setOnClickListener(v -> logout());
+
+        if (savedInstanceState == null) {
+            CategoriesFragment categoriesFragment = new CategoriesFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, categoriesFragment); // Sử dụng replace để tránh đè
+            transaction.commit();
+        }
     }
 
     private void logout() {

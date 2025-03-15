@@ -1,6 +1,7 @@
 package com.example.final_project_group5.api;
 
 import com.example.final_project_group5.entity.Cart;
+import com.example.final_project_group5.entity.Product;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface CartService {
 
     @GET(CARTS)
     Call<List<Cart>> getCartsByUser(@Query("userId") int userId);
+
+
 }
