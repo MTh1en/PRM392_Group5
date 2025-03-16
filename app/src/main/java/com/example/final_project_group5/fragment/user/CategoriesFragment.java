@@ -78,12 +78,11 @@ public class CategoriesFragment extends Fragment {
                     productFragment.setArguments(bundle);
 
                     getParentFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, productFragment)
+                            .replace(R.id.frame_layout1, productFragment) // Sửa từ fragment_container thành frame_layout1
                             .addToBackStack(null)
                             .commit();
                 }
             });
-
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;

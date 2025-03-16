@@ -1,30 +1,193 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
-            <ImageView android:id="@+id/productImage" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop" android:src="@drawable/banner"/>
-            <TextView android:id="@+id/productName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="NVIDIA GeForce RTX 4070" android:textSize="18sp" android:textStyle="bold"/>
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="4dp">
-                <RatingBar android:id="@+id/ratingBar" style="?android:attr/ratingBarStyleSmall" android:layout_width="wrap_content" android:layout_height="wrap_content" android:numStars="5" android:rating="4"/>
-                <TextView android:id="@+id/ratingCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:text="(99+ đánh giá)" android:textSize="12sp"/>
-            </LinearLayout>
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingTop="8dp">
-                <TextView android:id="@+id/productPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="13.999.000đ" android:textColor="#FF0000" android:textSize="16sp" android:textStyle="bold"/>
-                <TextView android:id="@+id/originalPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="15.999.000đ" android:textColor="#888888" android:textSize="14sp" android:layout_gravity="center_vertical"/>
-                <TextView android:id="@+id/discountPercentage" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="-15%" android:textColor="#008000" android:textSize="14sp" android:layout_gravity="center_vertical"/>
-            </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingTop="16dp" android:text="Thông số kỹ thuật" android:textSize="16sp" android:textStyle="bold"/>
-            <GridLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:columnCount="2" android:paddingTop="8dp">
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:padding="8dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Brand" android:textSize="14sp"/>
-                    <TextView android:id="@+id/brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="7680" android:textSize="14sp" android:textStyle="bold"/>
-                </LinearLayout>
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="vertical" android:padding="8dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stock" android:textSize="14sp"/>
-                    <TextView android:id="@+id/stock" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2.48 GHz" android:textSize="14sp" android:textStyle="bold"/>
-                </LinearLayout>
-            </GridLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingTop="16dp" android:text="Mô tả sản phẩm" android:textSize="16sp" android:textStyle="bold"/>
-            <TextView android:id="@+id/productDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="NVIDIA GeForce RTX 4070 mang đến hiệu năng..." android:textSize="14sp" android:maxLines="3" android:ellipsize="end"/>
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:visibility="visible">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/productImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/banner"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/productName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Tên sản phẩm"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:visibility="visible">
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:rating="0"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/ratingCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="(0+ đánh giá)"
+                android:textSize="12sp"
+                android:visibility="visible"/>
         </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/productPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0đ"
+                android:textColor="#FF0000"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/originalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="0đ"
+                android:textColor="#888888"
+                android:textSize="14sp"
+                android:layout_gravity="center_vertical"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/discountPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="-0%"
+                android:textColor="#008000"
+                android:textSize="14sp"
+                android:layout_gravity="center_vertical"
+                android:visibility="visible"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="Thông số kỹ thuật"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:paddingTop="8dp"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Brand"
+                    android:textSize="14sp"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/brand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N/A"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock"
+                    android:textSize="14sp"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/stock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N/A"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"/>
+            </LinearLayout>
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="Mô tả sản phẩm"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/productDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Mô tả sản phẩm sẽ hiển thị tại đây..."
+            android:textSize="14sp"
+            android:maxLines="10"
+            android:ellipsize="end"
+            android:visibility="visible"/>
+    </LinearLayout>
+</ScrollView>
+    </FrameLayout>
