@@ -5,6 +5,7 @@ public class Cart {
     private int userId;
     private int productId;
     private int quantity;
+
     public Cart() {}
 
     public Cart(String id, int userId, int productId, int quantity) {
