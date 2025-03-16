@@ -24,14 +24,13 @@
             android:name=".activity.SignUp"
             android:exported="true" />
         <activity
-<<<<<<< HEAD
-            android:name=".activity.MainActivity"
+            android:name=".activity.Welcome"
             android:exported="true" />
         <activity
-            android:name=".activity.UserDashboard"
-=======
             android:name=".activity.Login"
->>>>>>> 435b8cdfd87101968b99afc50a4b8295f1834f2f
+            android:exported="true" />
+        <activity
+            android:name=".activity.Test"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

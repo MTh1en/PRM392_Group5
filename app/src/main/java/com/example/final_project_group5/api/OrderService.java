@@ -14,7 +14,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface OrderService {
-    String ORDERS = "Order"; // "orders" là tên endpoint trong MockAPI.io
+    String ORDERS = "Order";
 
     @GET(ORDERS)
     Call<List<Order>> getAllOrders();
