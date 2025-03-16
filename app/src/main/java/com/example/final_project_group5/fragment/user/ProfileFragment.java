@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,75 +16,103 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.final_project_group5.R;
-import com.example.final_project_group5.api.ApiClient;
-import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.User;
+import com.example.final_project_group5.repository.UserRepo;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
-
-    private EditText textName, textEmail, textAddress, textPhone, textRole, textActive;
-    private ImageView imageProfile;
-    private Button btnEdit;
-    private UserService userService;
-    private String userId = "2"; // Cần thay bằng ID của user đang đăng nhập
+    private TextView changePasswordTitle;
+    private EditText etNameInput, etEmailInput, etAddressInput, etPhoneInput, etOldPassword, etNewPassword, etConfirmPassword;
+    private ImageView ivProfileImage;
+    private Button btnEditProfile, btnChangePassword;
+    private String userId;
     private boolean isEditing = false;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    public static ProfileFragment newInstance() {
-        return new ProfileFragment();
+    public static ProfileFragment newInstance(String userId) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString("USER_ID", userId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            userId = getArguments().getString("USER_ID");
+        }
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile2, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        changePasswordTitle = view.findViewById(R.id.tvChangePasswordTitle);
+        etNameInput = view.findViewById(R.id.etNameInput);
+        etEmailInput = view.findViewById(R.id.etEmailInput);
+        etAddressInput = view.findViewById(R.id.etAddressInput);
+        etPhoneInput = view.findViewById(R.id.etPhoneInput);
+        etOldPassword = view.findViewById(R.id.etOldPassword);
+        etNewPassword = view.findViewById(R.id.etNewPassword);
+        etConfirmPassword = view.findViewById(R.id.etConfirmPassword);
+        ivProfileImage = view.findViewById(R.id.ivProfileImage);
+        btnEditProfile = view.findViewById(R.id.btnEditProfile);
+        btnChangePassword = view.findViewById(R.id.btnChangePassword);
 
-        textName = view.findViewById(R.id.txtName2);
-        textEmail = view.findViewById(R.id.txtEmail2);
-        textAddress = view.findViewById(R.id.txtAddress2);
-        textPhone = view.findViewById(R.id.txtPhone2);
-        textRole = view.findViewById(R.id.txtRole2);
-        textActive = view.findViewById(R.id.txtActive2);
-        imageProfile = view.findViewById(R.id.imageProfile);
-        btnEdit = view.findViewById(R.id.btnEdit);
-
-        userService = ApiClient.getUserService();
         loadUserProfile();
+        UserRepo.getUserService().getUser(userId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    User user = response.body();
+                    if (user.getPassword().equals("google")){
+                        changePasswordTitle.setText("Không thể đổi mật khẩu với tài khoản đăng nhập bằng google");
+                        etOldPassword.setVisibility(View.GONE);
+                        etNewPassword.setVisibility(View.GONE);
+                        etConfirmPassword.setVisibility(View.GONE);
+                        btnChangePassword.setVisibility(View.GONE);
+                    }
+                }
+            }
 
-        btnEdit.setOnClickListener(v -> toggleEditMode());
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
+        btnEditProfile.setOnClickListener(v -> toggleEditMode());
+        btnChangePassword.setOnClickListener(v -> changePassword());
     }
 
     private void loadUserProfile() {
-        Call<User> call = userService.getUser(userId);
+        Call<User> call = UserRepo.getUserService().getUser(userId);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     User user = response.body();
-                    textName.setText(user.getName());
-                    textEmail.setText(user.getEmail());
-                    textAddress.setText(user.getAddress());
-                    textPhone.setText(user.getPhone());
-                    textRole.setText(user.getRole());
-                    textActive.setText(user.isActive() ? "Active" : "Inactive");
+                    etNameInput.setText(user.getName());
+                    etEmailInput.setText(user.getEmail());
+                    etAddressInput.setText(user.getAddress());
+                    etPhoneInput.setText(user.getPhone());
 
                     if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
                         Glide.with(requireContext())
                                 .load(user.getAvatar())
                                 .placeholder(R.drawable.app_logo)
                                 .error(R.drawable.app_logo)
-                                .into(imageProfile);
+                                .into(ivProfileImage);
                     }
 
                     setEditable(false);
@@ -106,28 +135,22 @@ public class ProfileFragment extends Fragment {
             setEditable(true);
         }
         isEditing = !isEditing;
-        btnEdit.setText(isEditing ? "Save" : "Edit");
+        btnEditProfile.setText(isEditing ? "Save" : "Edit");
     }
 
     private void setEditable(boolean enabled) {
-        textName.setEnabled(enabled);
-        textEmail.setEnabled(enabled);
-        textAddress.setEnabled(enabled);
-        textPhone.setEnabled(enabled);
-        textRole.setEnabled(enabled);
-        textActive.setEnabled(enabled);
+        etNameInput.setEnabled(enabled);
+        etAddressInput.setEnabled(enabled);
+        etPhoneInput.setEnabled(enabled);
     }
 
     private void saveUserProfile() {
         User updatedUser = new User();
-        updatedUser.setName(textName.getText().toString());
-        updatedUser.setEmail(textEmail.getText().toString());
-        updatedUser.setAddress(textAddress.getText().toString());
-        updatedUser.setPhone(textPhone.getText().toString());
-        updatedUser.setRole(textRole.getText().toString());
-        updatedUser.setActive(textActive.getText().toString().equalsIgnoreCase("Active"));
+        updatedUser.setName(etNameInput.getText().toString());
+        updatedUser.setAddress(etAddressInput.getText().toString());
+        updatedUser.setPhone(etPhoneInput.getText().toString());
 
-        Call<User> call = userService.updateUser(userId, updatedUser);
+        Call<User> call = UserRepo.getUserService().updateUser(userId, updatedUser);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -142,6 +165,50 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void changePassword() {
+        UserRepo.getUserService().getUser(userId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                String oldPassword = etOldPassword.getText().toString().trim();
+                String newPassword = etNewPassword.getText().toString().trim();
+                String confirmPassword = etConfirmPassword.getText().toString().trim();
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    if (user.getPassword().equals("google")){
+                        Toast.makeText(getContext(), "Không thể đổi mật khẩu cho tài khoản google", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (user.getPassword().equals(oldPassword)) {
+                        if (newPassword.equals(confirmPassword)) {
+                            User updatePasswordUser = new User();
+                            updatePasswordUser.setPassword(newPassword);
+                            UserRepo.getUserService().updateUser(userId, updatePasswordUser).enqueue(new Callback<User>() {
+                                @Override
+                                public void onResponse(Call<User> call, Response<User> response) {
+                                    if (response.isSuccessful()) {
+                                        Toast.makeText(getContext(), "Đã cập nhật password thành công", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<User> call, Throwable t) {
+                                    Toast.makeText(getContext(), "Đổi mật khẩu thất bại" + t, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Mật khẩu cũ không đúng", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(getContext(), "Đổi mật khẩu thất bại" + t, Toast.LENGTH_SHORT).show();
             }
         });
     }

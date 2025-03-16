@@ -12,8 +12,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.final_project_group5.R;
-import com.example.final_project_group5.api.ApiClient;
-import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.User;
 import com.example.final_project_group5.repository.UserRepo;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -154,6 +152,7 @@ public class Login extends AppCompatActivity {
                 } else {
                     User newUser = new User();
                     newUser.setEmail(email);
+                    newUser.setPassword("google");
                     newUser.setName(name);
                     newUser.setRole("CUSTOMER");
                     newUser.setActive(true);
@@ -189,19 +188,16 @@ public class Login extends AppCompatActivity {
     }
 
     private void handleSuccessfulLogin(User user) {
+        Intent intent;
         if (user.getRole().equals("ADMIN")){
-            Intent intent = new Intent(Login.this, AdminDashboard.class);
-            intent.putExtra("USER_ID", user.getId());
-            intent.putExtra("USER_EMAIL", user.getEmail());
-            intent.putExtra("USER_NAME", user.getName());
-            startActivity(intent);
+            intent = new Intent(Login.this, AdminDashboard.class);
         }else{
-            Intent intent = new Intent(Login.this, UserDashboard.class);
-            intent.putExtra("USER_ID", user.getId());
-            intent.putExtra("USER_EMAIL", user.getEmail());
-            intent.putExtra("USER_NAME", user.getName());
-            startActivity(intent);
+            intent = new Intent(Login.this, UserDashboard.class);
         }
+        intent.putExtra("USER_ID", user.getId());
+        intent.putExtra("USER_EMAIL", user.getEmail());
+        intent.putExtra("USER_NAME", user.getName());
+        startActivity(intent);
         finish();
     }
 }

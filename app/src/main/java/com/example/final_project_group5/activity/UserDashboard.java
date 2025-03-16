@@ -1,5 +1,6 @@
 package com.example.final_project_group5.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -18,11 +19,12 @@ import com.example.final_project_group5.databinding.ActivityUserDashboardBinding
 public class UserDashboard extends AppCompatActivity {
     ActivityUserDashboardBinding binding;
 
+    String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
+        userId = getIntent().getStringExtra("USER_ID");
         binding = ActivityUserDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -40,7 +42,7 @@ public class UserDashboard extends AppCompatActivity {
                 replaceFragment(new CartFragment());
                 return true;
             } else if (item.getItemId() == R.id.profile) {
-                replaceFragment(new ProfileFragment());
+                replaceFragment(ProfileFragment.newInstance(userId));
                 return true;
             }
             return false;
