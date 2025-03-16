@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Category Name"
-        android:textColor="#3EAEF4"
+        android:textColor="@color/black"
         android:textSize="14sp" />
 
 </LinearLayout>
