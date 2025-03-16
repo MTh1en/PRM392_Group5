@@ -71,12 +71,16 @@ public class ProductFragment extends Fragment {
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     displayProducts(response.body());
+                } else {
+                    Log.e("ProductFragment", "API response failed: " + response.code());
+                    Toast.makeText(getContext(), "Failed to load products", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
                 Log.e("ProductFragment", "API call failed: " + t.getMessage());
+                Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -115,15 +119,13 @@ public class ProductFragment extends Fragment {
             productPriceTextView.setTextColor(Color.RED);
             productCard.addView(productPriceTextView);
 
-            // RatingBar
             RatingBar ratingBar = new RatingBar(getContext(), null, android.R.attr.ratingBarStyleSmall);
             ratingBar.setNumStars(5);
             ratingBar.setStepSize(1f);
             ratingBar.setIsIndicator(true);
             ratingBar.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
             float ratingValue = Math.min((float) product.getRatingCount(), 5);
             ratingBar.setRating(ratingValue);
             productCard.addView(ratingBar);
@@ -133,6 +135,8 @@ public class ProductFragment extends Fragment {
             addToCartButton.setBackgroundResource(R.drawable.button_background);
             productCard.addView(addToCartButton);
 
+
+=======
             addToCartButton.setOnClickListener(v -> {
                 if (product != null) {
                     CartService cartService = ApiClient.getClient().create(CartService.class);
@@ -185,6 +189,7 @@ public class ProductFragment extends Fragment {
                     }
                 }
             });
+
 
 
             productGridLayout.addView(productCard);

@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tvEmptyCart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Giỏ hàng trống"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:padding="16dp"/>
+
     <ListView
         android:id="@+id/listViewCart"
         android:layout_width="match_parent"
@@ -86,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Thanh toán"
-            android:background="@drawable/button_background" /> <!-- Áp dụng drawable -->
+            android:background="@drawable/button_background" />
 
     </LinearLayout>
 </LinearLayout>

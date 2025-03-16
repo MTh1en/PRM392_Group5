@@ -27,7 +27,9 @@ import retrofit2.Response;
 
 public class CartFragment extends Fragment {
     private ListView listViewCart;
+
     private TextView tvSubtotal, tvShippingFee, tvTotal;
+
     private Button btnCheckout;
     private CartAdapter cartAdapter;
     private List<Cart> cartItems = ProductFragment.cartItems; // Lấy danh sách từ ProductFragment
@@ -41,7 +43,10 @@ public class CartFragment extends Fragment {
         tvSubtotal = view.findViewById(R.id.tvSubtotal);
         tvShippingFee = view.findViewById(R.id.tvShippingFee);
         tvTotal = view.findViewById(R.id.tvTotal);
+        tvEmptyCart = view.findViewById(R.id.tvEmptyCart);
         btnCheckout = view.findViewById(R.id.btnCheckout);
+
+
 
         fetchProducts();
 
@@ -49,6 +54,7 @@ public class CartFragment extends Fragment {
 
         return view;
     }
+
 
     @Override
     public void onResume() {
@@ -70,17 +76,20 @@ public class CartFragment extends Fragment {
                     productList.clear();
                     productList.addAll(response.body());
 
+
                     // Log danh sách sản phẩm đã lấy được
                     for (Product product : productList) {
                         Log.d("CartFragment", "Fetched Product -> ID: " + product.getId() + ", Name: " + product.getName());
                     }
 
                     updateCartView();
+
                 }
             }
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
+
                 Toast.makeText(getContext(), "Lỗi kết nối khi lấy sản phẩm", Toast.LENGTH_SHORT).show();
             }
         });
@@ -91,6 +100,7 @@ public class CartFragment extends Fragment {
         if (productList.isEmpty()) {
             Log.e("CartFragment", "Product list is empty, waiting for update...");
             return;
+
         }
 
         Log.d("CartFragment", "Updating cart view with products: " + productList.size());
@@ -104,7 +114,9 @@ public class CartFragment extends Fragment {
     private void updateTotal() {
         double subtotal = 0.0;
         for (Cart cart : cartItems) {
+
             subtotal += cart.getQuantity() * 50000; // Giá mặc định
+
         }
         tvSubtotal.setText(subtotal + "đ");
         tvShippingFee.setText("50000đ");
