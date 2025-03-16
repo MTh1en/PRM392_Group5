@@ -28,8 +28,8 @@ public interface UserService {
     Call<User> deleteUser(@Path("id") String id);
 
     @GET(USERS)
-    Call<User> login(@Query("email") String email, @Query("password") String password);
+    Call<List<User>> login(@Query("email") String email, @Query("password") String password);
 
     @GET(USERS)
-    Call<User> loginGoogle(@Query("email") String email);
+    Call<List<User>> loginGoogle(@Query("email") String email);
 }
