@@ -1,6 +1,5 @@
 package com.example.final_project_group5.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -19,12 +18,11 @@ import com.example.final_project_group5.databinding.ActivityUserDashboardBinding
 public class UserDashboard extends AppCompatActivity {
     ActivityUserDashboardBinding binding;
 
-    String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        userId = getIntent().getStringExtra("USER_ID");
+
         binding = ActivityUserDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -32,17 +30,21 @@ public class UserDashboard extends AppCompatActivity {
         replaceFragment(new HomeFragment());
 
         binding.bottomNavigationViewUser.setOnItemSelectedListener(item -> {
+            Fragment fragment = null;
             if (item.getItemId() == R.id.home) {
-                replaceFragment(new HomeFragment());
-                return true;
+                fragment = new HomeFragment();
             } else if (item.getItemId() == R.id.categories) {
-                replaceFragment(new CategoriesFragment());
-                return true;
+                fragment = new CategoriesFragment();
             } else if (item.getItemId() == R.id.cart) {
-                replaceFragment(new CartFragment());
-                return true;
+                fragment = new CartFragment();
             } else if (item.getItemId() == R.id.profile) {
-                replaceFragment(ProfileFragment.newInstance(userId));
+                fragment = new ProfileFragment();
+            }
+
+            if (fragment != null) {
+                // Xóa backstack trước khi thay thế fragment mới
+                clearBackStack();
+                replaceFragment(fragment);
                 return true;
             }
             return false;
@@ -54,5 +56,12 @@ public class UserDashboard extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout1, fragment);
         fragmentTransaction.commit();
+    }
+
+    private void clearBackStack() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+            fragmentManager.popBackStack();
+        }
     }
 }

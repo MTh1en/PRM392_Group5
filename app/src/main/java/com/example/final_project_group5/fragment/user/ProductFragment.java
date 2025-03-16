@@ -112,11 +112,13 @@ public class ProductFragment extends Fragment {
             TextView productNameTextView = new TextView(getContext());
             productNameTextView.setText(product.getName());
             productNameTextView.setTypeface(null, Typeface.BOLD);
+            productNameTextView.setPadding(8, 8, 8, 0);
             productCard.addView(productNameTextView);
 
             TextView productPriceTextView = new TextView(getContext());
             productPriceTextView.setText(product.getDiscountedPrice() + "đ");
             productPriceTextView.setTextColor(Color.RED);
+            productPriceTextView.setPadding(8, 4, 8, 0);
             productCard.addView(productPriceTextView);
 
             RatingBar ratingBar = new RatingBar(getContext(), null, android.R.attr.ratingBarStyleSmall);
@@ -133,10 +135,10 @@ public class ProductFragment extends Fragment {
             Button addToCartButton = new Button(getContext());
             addToCartButton.setText("Add to cart");
             addToCartButton.setBackgroundResource(R.drawable.button_background);
+            addToCartButton.setTextAppearance(getContext(), R.style.WhiteButtonText);
             productCard.addView(addToCartButton);
 
-
-=======
+            // Sự kiện nhấn vào nút "Add to cart"
             addToCartButton.setOnClickListener(v -> {
                 if (product != null) {
                     CartService cartService = ApiClient.getClient().create(CartService.class);
@@ -190,7 +192,24 @@ public class ProductFragment extends Fragment {
                 }
             });
 
+            // Sự kiện nhấn vào sản phẩm để xem chi tiết
+            productCard.setOnClickListener(v -> {
+                if (product.getId() == null) {
+                    Toast.makeText(getContext(), "Product ID is missing", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("productId", product.getId());
+                productDetailFragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, productDetailFragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
 
             productGridLayout.addView(productCard);
         }
