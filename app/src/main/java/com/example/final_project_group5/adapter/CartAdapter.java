@@ -1,6 +1,7 @@
 package com.example.final_project_group5.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,13 @@ public class CartAdapter extends BaseAdapter {
     private Context context;
     private List<Cart> cartList;
     private List<Product> productList;
+    private OnCartUpdateListener cartUpdateListener;
 
-    public CartAdapter(Context context, List<Cart> cartList, List<Product> productList) {
+    public CartAdapter(Context context, List<Cart> cartList, List<Product> productList, OnCartUpdateListener cartUpdateListener) {
         this.context = context;
         this.cartList = cartList;
         this.productList = productList;
+        this.cartUpdateListener = cartUpdateListener;
     }
 
     @Override
@@ -45,62 +48,88 @@ public class CartAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_cart, parent, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-
-        ImageView ivProductImage = convertView.findViewById(R.id.ivProductImage);
-        TextView tvProductName = convertView.findViewById(R.id.tvProductName);
-        TextView tvProductSpecs = convertView.findViewById(R.id.tvProductSpecs);
-        TextView tvOriginalPrice = convertView.findViewById(R.id.tvOriginalPrice);
-        TextView tvDiscountedPrice = convertView.findViewById(R.id.tvDiscountedPrice);
-        TextView tvDiscount = convertView.findViewById(R.id.tvDiscount);
-        TextView tvQuantity = convertView.findViewById(R.id.tvQuantity);
-        Button btnDecrease = convertView.findViewById(R.id.btnDecrease);
-        Button btnIncrease = convertView.findViewById(R.id.btnIncrease);
-        ImageButton btnDelete = convertView.findViewById(R.id.btnDelete);
 
         Cart cart = cartList.get(position);
         Product product = getProductById(cart.getProductId());
 
         if (product != null) {
-            Glide.with(context).load(product.getImage()).into(ivProductImage);
-            tvProductName.setText(product.getName());
-            tvProductSpecs.setText(product.getDescription());
-            tvOriginalPrice.setText(String.format("%.0fđ", product.getOriginalPrice()));
-            tvDiscountedPrice.setText(String.format("%.0fđ", product.getDiscountedPrice()));
-            tvDiscount.setText(String.format("-%d%%", (int) (product.getDiscountPercentage() * 100)));
-            tvQuantity.setText(String.valueOf(cart.getQuantity()));
+            // Hiển thị dữ liệu sản phẩm trong giỏ hàng
+            Glide.with(context).load(product.getImage()).into(holder.ivProductImage);
+            holder.tvProductName.setText(product.getName());
+            holder.tvProductSpecs.setText(product.getDescription());
+            holder.tvOriginalPrice.setText(String.format("%.0fđ", product.getOriginalPrice()));
+            holder.tvDiscountedPrice.setText(String.format("%.0fđ", product.getDiscountedPrice()));
+            holder.tvDiscount.setText(String.format("-%d%%", (int) (product.getDiscountPercentage() * 100)));
+            holder.tvQuantity.setText(String.valueOf(cart.getQuantity()));
 
-            btnDecrease.setOnClickListener(v -> {
+            // Sự kiện giảm số lượng
+            holder.btnDecrease.setOnClickListener(v -> {
                 if (cart.getQuantity() > 1) {
                     cart.setQuantity(cart.getQuantity() - 1);
-                    tvQuantity.setText(String.valueOf(cart.getQuantity()));
                     notifyDataSetChanged();
+                    cartUpdateListener.onCartUpdated();
                 }
             });
 
-            btnIncrease.setOnClickListener(v -> {
+            // Sự kiện tăng số lượng
+            holder.btnIncrease.setOnClickListener(v -> {
                 cart.setQuantity(cart.getQuantity() + 1);
-                tvQuantity.setText(String.valueOf(cart.getQuantity()));
                 notifyDataSetChanged();
+                cartUpdateListener.onCartUpdated();
             });
 
-            btnDelete.setOnClickListener(v -> {
+            // Xóa sản phẩm khỏi giỏ hàng
+            holder.btnDelete.setOnClickListener(v -> {
                 cartList.remove(position);
                 notifyDataSetChanged();
+                cartUpdateListener.onCartUpdated();
             });
         }
 
         return convertView;
     }
 
+    // Tìm sản phẩm theo ID
     private Product getProductById(int productId) {
         for (Product product : productList) {
-            if (product.getId().equals(String.valueOf(productId))) {
+            if (Integer.parseInt(product.getId()) == productId) {
                 return product;
             }
         }
         return null;
+    }
+
+
+    // ViewHolder giúp tối ưu hiệu suất ListView
+    private static class ViewHolder {
+        ImageView ivProductImage;
+        TextView tvProductName, tvProductSpecs, tvOriginalPrice, tvDiscountedPrice, tvDiscount, tvQuantity;
+        Button btnDecrease, btnIncrease;
+        ImageButton btnDelete;
+
+        ViewHolder(View view) {
+            ivProductImage = view.findViewById(R.id.ivProductImage);
+            tvProductName = view.findViewById(R.id.tvProductName);
+            tvProductSpecs = view.findViewById(R.id.tvProductSpecs);
+            tvOriginalPrice = view.findViewById(R.id.tvOriginalPrice);
+            tvDiscountedPrice = view.findViewById(R.id.tvDiscountedPrice);
+            tvDiscount = view.findViewById(R.id.tvDiscount);
+            tvQuantity = view.findViewById(R.id.tvQuantity);
+            btnDecrease = view.findViewById(R.id.btnDecrease);
+            btnIncrease = view.findViewById(R.id.btnIncrease);
+            btnDelete = view.findViewById(R.id.btnDelete);
+        }
+    }
+
+    public interface OnCartUpdateListener {
+        void onCartUpdated();
     }
 }
