@@ -43,7 +43,7 @@ public class CartFragment extends Fragment {
         tvSubtotal = view.findViewById(R.id.tvSubtotal);
         tvShippingFee = view.findViewById(R.id.tvShippingFee);
         tvTotal = view.findViewById(R.id.tvTotal);
-        tvEmptyCart = view.findViewById(R.id.tvEmptyCart);
+//        tvEmptyCart = view.findViewById(R.id.tvEmptyCart);
         btnCheckout = view.findViewById(R.id.btnCheckout);
 
 
