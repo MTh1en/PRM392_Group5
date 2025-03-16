@@ -21,9 +21,12 @@ import androidx.fragment.app.FragmentManager;
 import com.bumptech.glide.Glide;
 import com.example.final_project_group5.R;
 import com.example.final_project_group5.api.ApiClient;
+import com.example.final_project_group5.api.CartService;
 import com.example.final_project_group5.api.ProductService;
+import com.example.final_project_group5.entity.Cart;
 import com.example.final_project_group5.entity.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -34,6 +37,7 @@ public class ProductFragment extends Fragment {
 
     private String categoryName;
     private GridLayout productGridLayout;
+    public static List<Cart> cartItems = new ArrayList<>(); // Danh sách giỏ hàng lưu toàn cục
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +55,7 @@ public class ProductFragment extends Fragment {
         btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
         productGridLayout = view.findViewById(R.id.productGridLayout);
-        productGridLayout.setColumnCount(2); // Thiết lập 2 cột cho GridLayout
+        productGridLayout.setColumnCount(2);
 
         fetchProductsByCategory();
 
@@ -72,7 +76,6 @@ public class ProductFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
-                t.printStackTrace();
                 Log.e("ProductFragment", "API call failed: " + t.getMessage());
             }
         });
@@ -85,7 +88,6 @@ public class ProductFragment extends Fragment {
         int cardWidth = getResources().getDisplayMetrics().widthPixels / 2 - (margin * 2);
 
         for (Product product : products) {
-            // Tạo Card chứa sản phẩm
             LinearLayout productCard = new LinearLayout(getContext());
             productCard.setOrientation(LinearLayout.VERTICAL);
             productCard.setPadding(16, 16, 16, 16);
@@ -96,7 +98,6 @@ public class ProductFragment extends Fragment {
             params.setMargins(margin, margin, margin, margin);
             productCard.setLayoutParams(params);
 
-            // Ảnh sản phẩm
             ImageView productImageView = new ImageView(getContext());
             productImageView.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, 300));
@@ -104,18 +105,14 @@ public class ProductFragment extends Fragment {
             Glide.with(getContext()).load(product.getImage()).into(productImageView);
             productCard.addView(productImageView);
 
-            // Tên sản phẩm
             TextView productNameTextView = new TextView(getContext());
             productNameTextView.setText(product.getName());
             productNameTextView.setTypeface(null, Typeface.BOLD);
-            productNameTextView.setPadding(8, 8, 8, 0);
             productCard.addView(productNameTextView);
 
-            // Giá sản phẩm
             TextView productPriceTextView = new TextView(getContext());
             productPriceTextView.setText(product.getDiscountedPrice() + "đ");
             productPriceTextView.setTextColor(Color.RED);
-            productPriceTextView.setPadding(8, 4, 8, 0);
             productCard.addView(productPriceTextView);
 
             // RatingBar
@@ -131,33 +128,65 @@ public class ProductFragment extends Fragment {
             ratingBar.setRating(ratingValue);
             productCard.addView(ratingBar);
 
-            // Nút thêm vào giỏ hàng
             Button addToCartButton = new Button(getContext());
             addToCartButton.setText("Add to cart");
             addToCartButton.setBackgroundResource(R.drawable.button_background);
-            addToCartButton.setTextAppearance(getContext(), R.style.WhiteButtonText);
             productCard.addView(addToCartButton);
 
-            // Sự kiện nhấn vào sản phẩm
-            productCard.setOnClickListener(v -> {
-                if (product.getId() == null) {
-                    Toast.makeText(getContext(), "Product ID is missing", Toast.LENGTH_SHORT).show();
-                    return;
+            addToCartButton.setOnClickListener(v -> {
+                if (product != null) {
+                    CartService cartService = ApiClient.getClient().create(CartService.class);
+
+                    // Kiểm tra xem sản phẩm đã có trong giỏ hàng hay chưa
+                    boolean exists = false;
+                    for (Cart cart : cartItems) {
+                        if (cart.getProductId() == Integer.parseInt(product.getId())) {
+                            cart.setQuantity(cart.getQuantity() + 1);
+
+                            // Gọi API cập nhật số lượng giỏ hàng
+                            Call<Cart> call = cartService.updateCart(cart.getId(), cart);
+                            call.enqueue(new Callback<Cart>() {
+                                @Override
+                                public void onResponse(Call<Cart> call, Response<Cart> response) {
+                                    if (response.isSuccessful()) {
+                                        Toast.makeText(getContext(), "Cập nhật giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Cart> call, Throwable t) {
+                                    Log.e("ProductFragment", "Lỗi cập nhật giỏ hàng: " + t.getMessage());
+                                }
+                            });
+
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
+                    if (!exists) {
+                        Cart newCart = new Cart("", 1, Integer.parseInt(product.getId()), 1); // userId = 1
+                        Call<Cart> call = cartService.createCart(newCart);
+                        call.enqueue(new Callback<Cart>() {
+                            @Override
+                            public void onResponse(Call<Cart> call, Response<Cart> response) {
+                                if (response.isSuccessful()) {
+                                    cartItems.add(response.body()); // Cập nhật danh sách giỏ hàng
+                                    Toast.makeText(getContext(), "Thêm vào giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Cart> call, Throwable t) {
+                                Log.e("ProductFragment", "Lỗi thêm giỏ hàng: " + t.getMessage());
+                            }
+                        });
+                    }
                 }
-
-                ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("productId", product.getId());
-                productDetailFragment.setArguments(bundle);
-
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, productDetailFragment)
-                        .addToBackStack(null)
-                        .commit();
             });
 
-            // Thêm sản phẩm vào GridLayout
+
             productGridLayout.addView(productCard);
         }
     }
