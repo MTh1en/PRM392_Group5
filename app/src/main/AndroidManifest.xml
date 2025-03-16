@@ -14,20 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Final_Project_Group5"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name=".AdminDashboard"-->
-<!--            android:exported="false" />-->
-<!--        <activity-->
-<!--            android:name=".MainActivity"-->
-<!--            android:exported="true" />-->
+        <activity
+            android:name=".activity.UserDashboard"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AdminDashboard"
+            android:exported="true" />
         <activity
             android:name=".activity.SignUp"
             android:exported="true" />
         <activity
+<<<<<<< HEAD
             android:name=".activity.MainActivity"
             android:exported="true" />
         <activity
             android:name=".activity.UserDashboard"
+=======
+            android:name=".activity.Login"
+>>>>>>> 435b8cdfd87101968b99afc50a4b8295f1834f2f
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
