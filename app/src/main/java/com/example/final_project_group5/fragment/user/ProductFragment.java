@@ -138,7 +138,7 @@ public class ProductFragment extends Fragment {
             addToCartButton.setTextAppearance(getContext(), R.style.WhiteButtonText);
             productCard.addView(addToCartButton);
 
-            // Sự kiện nhấn vào nút "Add to cart"
+
             addToCartButton.setOnClickListener(v -> {
                 if (product != null) {
                     CartService cartService = ApiClient.getClient().create(CartService.class);
@@ -191,6 +191,7 @@ public class ProductFragment extends Fragment {
                     }
                 }
             });
+
 
             // Sự kiện nhấn vào sản phẩm để xem chi tiết
             productCard.setOnClickListener(v -> {

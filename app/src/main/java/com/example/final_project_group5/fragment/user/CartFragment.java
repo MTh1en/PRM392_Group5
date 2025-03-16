@@ -28,7 +28,7 @@ import retrofit2.Response;
 public class CartFragment extends Fragment {
     private ListView listViewCart;
 
-    private TextView tvSubtotal, tvShippingFee, tvTotal;
+    private TextView tvSubtotal, tvShippingFee, tvTotal, tvEmptyCart;
 
     private Button btnCheckout;
     private CartAdapter cartAdapter;
