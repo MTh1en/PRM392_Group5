@@ -1,31 +1,32 @@
 package com.example.final_project_group5.entity;
 
+import java.util.List;
+
 public class Order {
     private String id;
     private int userId;
     private String orderDate;
     private double totalAmount;
-    private String status;
     private String shippingAddress;
     private float shippingFee;
     private float discountAmount;
     private String paymentStatus;
     private String shippingStatus;
-
+    private List<OrderDetail> orderDetails; // Thêm trường products
     public Order() {
     }
 
-    public Order(String id, int userId, String orderDate, double totalAmount, String status, String shippingAddress, float shippingFee, float discountAmount, String paymentStatus, String shippingStatus) {
+    public Order(String id, int userId, String orderDate, double totalAmount, String shippingAddress, float shippingFee, float discountAmount, String paymentStatus, String shippingStatus, List<OrderDetail> orderDetails) {
         this.id = id;
         this.userId = userId;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
-        this.status = status;
         this.shippingAddress = shippingAddress;
         this.shippingFee = shippingFee;
         this.discountAmount = discountAmount;
         this.paymentStatus = paymentStatus;
         this.shippingStatus = shippingStatus;
+        this.orderDetails = orderDetails;
     }
 
     public String getId() {
@@ -58,14 +59,6 @@ public class Order {
 
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getShippingAddress() {
@@ -106,5 +99,13 @@ public class Order {
 
     public void setShippingStatus(String shippingStatus) {
         this.shippingStatus = shippingStatus;
+    }
+
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 }

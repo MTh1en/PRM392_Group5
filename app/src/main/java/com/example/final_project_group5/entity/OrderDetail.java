@@ -2,8 +2,9 @@ package com.example.final_project_group5.entity;
 
 public class OrderDetail {
     private String id;
-    private int orderId;
-    private int productId;
+    private String productName;
+    private String productDescription;
+    private String productImage;
     private int quantity;
     private double originalPrice;
     private int discountAmount;
@@ -12,10 +13,11 @@ public class OrderDetail {
     public OrderDetail() {
     }
 
-    public OrderDetail(String id, int orderId, int productId, int quantity, double originalPrice, int discountAmount, double discountedPrice) {
+    public OrderDetail(String id, String productName, String productDescription, String productImage, int quantity, double originalPrice, int discountAmount, double discountedPrice) {
         this.id = id;
-        this.orderId = orderId;
-        this.productId = productId;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.productImage = productImage;
         this.quantity = quantity;
         this.originalPrice = originalPrice;
         this.discountAmount = discountAmount;
@@ -30,20 +32,28 @@ public class OrderDetail {
         this.id = id;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public int getProductId() {
-        return productId;
+    public String getProductDescription() {
+        return productDescription;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+
+    public String getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
     }
 
     public int getQuantity() {

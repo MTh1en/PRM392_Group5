@@ -135,8 +135,6 @@ public class ProductFragment extends Fragment {
             addToCartButton.setBackgroundResource(R.drawable.button_background);
             productCard.addView(addToCartButton);
 
-
-=======
             addToCartButton.setOnClickListener(v -> {
                 if (product != null) {
                     CartService cartService = ApiClient.getClient().create(CartService.class);
@@ -189,8 +187,6 @@ public class ProductFragment extends Fragment {
                     }
                 }
             });
-
-
 
             productGridLayout.addView(productCard);
         }
