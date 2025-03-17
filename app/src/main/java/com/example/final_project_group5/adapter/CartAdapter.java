@@ -10,13 +10,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.final_project_group5.R;
+import com.example.final_project_group5.api.ApiClient;
+import com.example.final_project_group5.api.CartService;
 import com.example.final_project_group5.entity.Cart;
 import com.example.final_project_group5.entity.Product;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartAdapter extends BaseAdapter {
     private Context context;
@@ -74,23 +81,45 @@ public class CartAdapter extends BaseAdapter {
             holder.btnDecrease.setOnClickListener(v -> {
                 if (cart.getQuantity() > 1) {
                     cart.setQuantity(cart.getQuantity() - 1);
-                    notifyDataSetChanged();
-                    cartUpdateListener.onCartUpdated();
+                    updateCartQuantity(cart); // Gọi API cập nhật số lượng
                 }
             });
 
-            // Sự kiện tăng số lượng
             holder.btnIncrease.setOnClickListener(v -> {
                 cart.setQuantity(cart.getQuantity() + 1);
-                notifyDataSetChanged();
-                cartUpdateListener.onCartUpdated();
+                updateCartQuantity(cart); // Gọi API cập nhật số lượng
             });
 
             // Xóa sản phẩm khỏi giỏ hàng
             holder.btnDelete.setOnClickListener(v -> {
-                cartList.remove(position);
-                notifyDataSetChanged();
-                cartUpdateListener.onCartUpdated();
+                Cart cartItem = cartList.get(position);
+
+                Log.d("CartAdapter", "ID sản phẩm cần xóa: " + cartItem.getId());
+
+                CartService cartService = ApiClient.getClient().create(CartService.class);
+                Call<Void> call = cartService.deleteCart(cartItem.getId());
+
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Log.d("CartAdapter", "API Response Code: " + response.code());
+
+                        if (response.isSuccessful()) {
+                            cartList.remove(position);
+                            notifyDataSetChanged();
+                            Toast.makeText(context, "Xóa sản phẩm thành công!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("CartAdapter", "Lỗi API: " + response.code() + " - " + response.message());
+                            Toast.makeText(context, "Lỗi khi xóa sản phẩm! Mã lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("CartAdapter", "Lỗi kết nối: " + t.getMessage());
+                        Toast.makeText(context, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             });
         }
 
@@ -105,6 +134,36 @@ public class CartAdapter extends BaseAdapter {
             }
         }
         return null;
+    }
+
+    private void updateCartQuantity(Cart cart) {
+        Log.d("CartAdapter", "🛠️ Đang gửi API cập nhật - ID: " + cart.getId() + ", Quantity: " + cart.getQuantity());
+
+        CartService cartService = ApiClient.getClient().create(CartService.class);
+        Call<Cart> call = cartService.updateCart(cart.getId(), cart);
+
+        call.enqueue(new Callback<Cart>() {
+            @Override
+            public void onResponse(Call<Cart> call, Response<Cart> response) {
+                Log.d("CartAdapter", "📩 API Response Code: " + response.code());
+
+                if (response.isSuccessful()) {
+                    Log.d("CartAdapter", "✅ Cập nhật thành công!");
+                    notifyDataSetChanged();
+                    cartUpdateListener.onCartUpdated();
+                    Toast.makeText(context, "Cập nhật số lượng thành công!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("CartAdapter", "❌ Lỗi API: " + response.code() + " - " + response.message());
+                    Toast.makeText(context, "Lỗi khi cập nhật số lượng!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Cart> call, Throwable t) {
+                Log.e("CartAdapter", "⚠️ Lỗi kết nối: " + t.getMessage());
+                Toast.makeText(context, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
