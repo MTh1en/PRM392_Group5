@@ -68,55 +68,56 @@ public class CartAdapter extends BaseAdapter {
         Product product = getProductById(cart.getProductId());
 
         if (product != null) {
-            // Hiển thị dữ liệu sản phẩm trong giỏ hàng
+            // Hiển thị thông tin sản phẩm trong giỏ hàng
             Glide.with(context).load(product.getImage()).into(holder.ivProductImage);
             holder.tvProductName.setText(product.getName());
-            holder.tvProductSpecs.setText(product.getDescription());
-            holder.tvOriginalPrice.setText(String.format("%.0fđ", product.getOriginalPrice()));
-            holder.tvDiscountedPrice.setText(String.format("%.0fđ", product.getDiscountedPrice()));
-            holder.tvDiscount.setText(String.format("-%d%%", (int) (product.getDiscountPercentage() * 100)));
+//            holder.tvProductSpecs.setText(product.getDescription());
+
+            // Tính toán giá giảm
+            double originalPrice = product.getOriginalPrice();
+            int discountPercentage = getDiscountByProductId(cart.getProductId());
+            double discountedPrice = originalPrice * (1 - discountPercentage / 100.0);
+
+            holder.tvOriginalPrice.setText(String.format("%.0fđ", originalPrice));
+            holder.tvDiscountedPrice.setText(String.format("%.0fđ", discountedPrice));
+            holder.tvDiscount.setText(String.format("-%d%%", discountPercentage));
+
             holder.tvQuantity.setText(String.valueOf(cart.getQuantity()));
 
-            // Sự kiện giảm số lượng
+            // Giảm số lượng
             holder.btnDecrease.setOnClickListener(v -> {
                 if (cart.getQuantity() > 1) {
                     cart.setQuantity(cart.getQuantity() - 1);
-                    updateCartQuantity(cart); // Gọi API cập nhật số lượng
+                    updateCartQuantity(cart);
                 }
             });
 
+            // Tăng số lượng
             holder.btnIncrease.setOnClickListener(v -> {
                 cart.setQuantity(cart.getQuantity() + 1);
-                updateCartQuantity(cart); // Gọi API cập nhật số lượng
+                updateCartQuantity(cart);
             });
 
             // Xóa sản phẩm khỏi giỏ hàng
             holder.btnDelete.setOnClickListener(v -> {
                 Cart cartItem = cartList.get(position);
-
-                Log.d("CartAdapter", "ID sản phẩm cần xóa: " + cartItem.getId());
-
                 CartService cartService = ApiClient.getClient().create(CartService.class);
                 Call<Void> call = cartService.deleteCart(cartItem.getId());
 
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-                        Log.d("CartAdapter", "API Response Code: " + response.code());
-
                         if (response.isSuccessful()) {
                             cartList.remove(position);
                             notifyDataSetChanged();
                             Toast.makeText(context, "Xóa sản phẩm thành công!", Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.e("CartAdapter", "Lỗi API: " + response.code() + " - " + response.message());
-                            Toast.makeText(context, "Lỗi khi xóa sản phẩm! Mã lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Lỗi khi xóa sản phẩm!", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        Log.e("CartAdapter", "Lỗi kết nối: " + t.getMessage());
                         Toast.makeText(context, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -126,7 +127,7 @@ public class CartAdapter extends BaseAdapter {
         return convertView;
     }
 
-    // Tìm sản phẩm theo ID
+    // Lấy sản phẩm theo ID
     private Product getProductById(int productId) {
         for (Product product : productList) {
             if (Integer.parseInt(product.getId()) == productId) {
@@ -136,36 +137,38 @@ public class CartAdapter extends BaseAdapter {
         return null;
     }
 
-    private void updateCartQuantity(Cart cart) {
-        Log.d("CartAdapter", "🛠️ Đang gửi API cập nhật - ID: " + cart.getId() + ", Quantity: " + cart.getQuantity());
+    // Lấy discount theo ID sản phẩm
+    public int getDiscountByProductId(int productId) {
+        Product product = getProductById(productId);
+        if (product != null) {
+            return (int) product.getDiscountPercentage();
+        }
+        return 0; // Trả về 0 nếu không tìm thấy sản phẩm
+    }
 
+    // Cập nhật số lượng giỏ hàng qua API
+    private void updateCartQuantity(Cart cart) {
         CartService cartService = ApiClient.getClient().create(CartService.class);
         Call<Cart> call = cartService.updateCart(cart.getId(), cart);
 
         call.enqueue(new Callback<Cart>() {
             @Override
             public void onResponse(Call<Cart> call, Response<Cart> response) {
-                Log.d("CartAdapter", "📩 API Response Code: " + response.code());
-
                 if (response.isSuccessful()) {
-                    Log.d("CartAdapter", "✅ Cập nhật thành công!");
                     notifyDataSetChanged();
                     cartUpdateListener.onCartUpdated();
                     Toast.makeText(context, "Cập nhật số lượng thành công!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("CartAdapter", "❌ Lỗi API: " + response.code() + " - " + response.message());
                     Toast.makeText(context, "Lỗi khi cập nhật số lượng!", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Cart> call, Throwable t) {
-                Log.e("CartAdapter", "⚠️ Lỗi kết nối: " + t.getMessage());
                 Toast.makeText(context, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     // ViewHolder giúp tối ưu hiệu suất ListView
     private static class ViewHolder {
@@ -177,7 +180,7 @@ public class CartAdapter extends BaseAdapter {
         ViewHolder(View view) {
             ivProductImage = view.findViewById(R.id.ivProductImage);
             tvProductName = view.findViewById(R.id.tvProductName);
-            tvProductSpecs = view.findViewById(R.id.tvProductSpecs);
+//            tvProductSpecs = view.findViewById(R.id.tvProductSpecs);
             tvOriginalPrice = view.findViewById(R.id.tvOriginalPrice);
             tvDiscountedPrice = view.findViewById(R.id.tvDiscountedPrice);
             tvDiscount = view.findViewById(R.id.tvDiscount);

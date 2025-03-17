@@ -100,7 +100,6 @@ public class CartFragment extends Fragment {
         if (productList.isEmpty()) {
             Log.e("CartFragment", "Product list is empty, waiting for update...");
             return;
-
         }
 
         Log.d("CartFragment", "Updating cart view with products: " + productList.size());
@@ -108,18 +107,31 @@ public class CartFragment extends Fragment {
         cartAdapter = new CartAdapter(getContext(), cartItems, productList, this::updateTotal);
         listViewCart.setAdapter(cartAdapter);
         cartAdapter.notifyDataSetChanged();
-        updateTotal();
-    }
 
+        updateTotal(); // Gọi cập nhật tổng giá trị giỏ hàng
+    }
+    private Product getProductById(int productId) {
+        for (Product product : productList) {
+            if (Integer.parseInt(product.getId()) == productId) {
+                return product;
+            }
+        }
+        return null;
+    }
     private void updateTotal() {
         double subtotal = 0.0;
+
         for (Cart cart : cartItems) {
+            Product product = getProductById(cart.getProductId());
 
-            subtotal += cart.getQuantity() * 50000; // Giá mặc định
-
+            if (product != null) {
+                subtotal += cart.getQuantity() * product.getDiscountedPrice(); // Sử dụng giá đã giảm
+            }
         }
-        tvSubtotal.setText(subtotal + "đ");
-        tvShippingFee.setText("50000đ");
-        tvTotal.setText((subtotal + 50000) + "đ");
+
+        tvSubtotal.setText(String.format("%.0fđ", subtotal));
+        double shippingFee = 50000; // Phí vận chuyển cố định
+        tvShippingFee.setText(String.format("%.0fđ", shippingFee));
+        tvTotal.setText(String.format("%.0fđ", subtotal + shippingFee));
     }
 }
