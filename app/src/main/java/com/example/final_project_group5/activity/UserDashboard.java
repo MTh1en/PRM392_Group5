@@ -18,11 +18,13 @@ import com.example.final_project_group5.databinding.ActivityUserDashboardBinding
 public class UserDashboard extends AppCompatActivity {
     ActivityUserDashboardBinding binding;
 
+    String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
+userId = getIntent().getStringExtra("USER_ID");
         binding = ActivityUserDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -32,13 +34,17 @@ public class UserDashboard extends AppCompatActivity {
         binding.bottomNavigationViewUser.setOnItemSelectedListener(item -> {
             Fragment fragment = null;
             if (item.getItemId() == R.id.home) {
-                fragment = new HomeFragment();
+              replaceFragment(new HomeFragment());
+              return true;
             } else if (item.getItemId() == R.id.categories) {
-                fragment = new CategoriesFragment();
+                replaceFragment(new CategoriesFragment());
+                return true;
             } else if (item.getItemId() == R.id.cart) {
-                fragment = new CartFragment();
+                replaceFragment(new CartFragment());
+                return true;
             } else if (item.getItemId() == R.id.profile) {
-                fragment = new ProfileFragment();
+                replaceFragment(ProfileFragment.newInstance(userId) );
+                return true;
             }
 
             if (fragment != null) {

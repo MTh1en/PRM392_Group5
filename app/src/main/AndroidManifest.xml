@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -24,14 +23,12 @@
         <activity
             android:name=".activity.SignUp"
             android:exported="true" />
-        <activity
-            android:name=".activity.Welcome"
-            android:exported="true" />
+
         <activity
             android:name=".activity.Login"
             android:exported="true" />
         <activity
-            android:name=".activity.Test"
+            android:name=".activity.Welcome"
             android:exported="true">
 
             <intent-filter>
