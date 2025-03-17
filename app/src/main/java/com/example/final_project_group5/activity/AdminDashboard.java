@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.final_project_group5.fragment.admin.OrderFragment;
+import com.example.final_project_group5.fragment.admin.ProductAdminFragment;
 import com.example.final_project_group5.fragment.user.ProductFragment;
 import com.example.final_project_group5.R;
 import com.example.final_project_group5.fragment.admin.UserFragment;
@@ -59,7 +60,7 @@ public class AdminDashboard extends AppCompatActivity {
                 replaceFragment(new OrderFragment());
                 return true;
             } else if (item.getItemId() == R.id.products) {
-                replaceFragment(new ProductFragment());
+                replaceFragment(new ProductAdminFragment());
                 return true;
             }
             return false;
