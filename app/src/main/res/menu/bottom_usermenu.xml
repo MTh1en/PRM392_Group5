@@ -8,9 +8,9 @@
         android:icon="@drawable/category"
         android:title="Categories" />
     <item
-        android:id="@+id/cart"
-        android:icon="@drawable/shoppinglist"
-        android:title="Cart" />
+        android:id="@+id/order"
+        android:icon="@drawable/baseline_add_shopping_cart_24"
+        android:title="Orders" />
     <item
         android:id="@+id/profile"
         android:icon="@drawable/user"

@@ -8,15 +8,13 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
-
 import com.example.final_project_group5.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriesFragment extends Fragment {
 
-    private GridLayout categoriesContainer; // Thay LinearLayout bằng GridLayout
+    private GridLayout categoriesContainer;
     private List<String> categoryList;
     private List<Integer> categoryIconList;
 
@@ -26,6 +24,23 @@ public class CategoriesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
 
         categoriesContainer = view.findViewById(R.id.categoriesContainer);
+
+        // Xử lý Toolbar
+        ImageView btnBack = view.findViewById(R.id.btn_back);
+        ImageView btnSearch = view.findViewById(R.id.btn_search);
+        ImageView btnCart = view.findViewById(R.id.btn_cart);
+
+        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        btnSearch.setOnClickListener(v -> {
+            // Xử lý tìm kiếm (có thể mở một SearchFragment sau này)
+        });
+        btnCart.setOnClickListener(v -> {
+            CartFragment cartFragment = new CartFragment();
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.frame_layout1, cartFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         categoryList = new ArrayList<>();
         categoryIconList = new ArrayList<>();
@@ -78,7 +93,7 @@ public class CategoriesFragment extends Fragment {
                     productFragment.setArguments(bundle);
 
                     getParentFragmentManager().beginTransaction()
-                            .replace(R.id.frame_layout1, productFragment) // Sửa từ fragment_container thành frame_layout1
+                            .replace(R.id.frame_layout1, productFragment)
                             .addToBackStack(null)
                             .commit();
                 }
@@ -86,7 +101,7 @@ public class CategoriesFragment extends Fragment {
 
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f); // Mỗi item chiếm 1 cột với trọng số đều
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
             categoryLayout.setLayoutParams(params);
 
             categoriesContainer.addView(categoryLayout);
