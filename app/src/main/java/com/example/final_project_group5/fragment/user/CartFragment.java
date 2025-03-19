@@ -22,6 +22,7 @@ import com.example.final_project_group5.entity.Cart;
 import com.example.final_project_group5.entity.Order;
 import com.example.final_project_group5.entity.OrderDetail;
 import com.example.final_project_group5.entity.Product;
+import com.example.final_project_group5.repository.CartRepo;
 import com.example.final_project_group5.repository.OrderRepo;
 import com.example.final_project_group5.repository.ProductRepo;
 
@@ -97,10 +98,30 @@ public class CartFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (isViewInitialized) {
+            fetchCartByUserId(Integer.parseInt(userId)); // Lấy cart theo userId
             updateCartView();
         }
     }
+    private void fetchCartByUserId(int userId) {
+        Call<List<Cart>> call = CartRepo.getCartService().getCartsByUser(userId);
+        call.enqueue(new Callback<List<Cart>>() {
+            @Override
+            public void onResponse(Call<List<Cart>> call, Response<List<Cart>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    cartItems.clear();
+                    cartItems.addAll(response.body());
+                    updateCartView();
+                } else {
+                    Toast.makeText(getContext(), "Lỗi khi lấy giỏ hàng", Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<Cart>> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi kết nối khi lấy giỏ hàng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void fetchProducts() {
         Call<List<Product>> call = ProductRepo.getProductService().getAllProducts();
         call.enqueue(new Callback<List<Product>>() {
@@ -178,7 +199,6 @@ public class CartFragment extends Fragment {
             return null;
         }
         order.setUserId(Integer.parseInt(userId));
-
         order.setOrderDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         double total = 0.0;

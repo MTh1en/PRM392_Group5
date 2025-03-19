@@ -48,9 +48,6 @@ public class CategoriesFragment extends Fragment {
         });
         Log.d("Category", "User ID: " + userId);
         btnCart.setOnClickListener(v -> {
-//            SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//            String userId = sharedPreferences.getString("USER_ID", null);
-
             CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.frame_layout1, cartFragment)
@@ -102,12 +99,7 @@ public class CategoriesFragment extends Fragment {
             categoryLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", categoryName);
-
-                    ProductFragment productFragment = new ProductFragment();
-                    productFragment.setArguments(bundle);
-
+                    ProductFragment productFragment = ProductFragment.newInstance(userId); // Sử dụng userId trực tiếp
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.frame_layout1, productFragment)
                             .addToBackStack(null)

@@ -37,7 +37,15 @@ public class ProductFragment extends Fragment {
 
     private String categoryName;
     private GridLayout productGridLayout;
-    public static List<Cart> cartItems = new ArrayList<>(); // Danh sách giỏ hàng lưu toàn cục
+    public static List<Cart> cartItems = new ArrayList<>();
+    private String userId;
+    public static ProductFragment newInstance(String userId) {
+        ProductFragment fragment = new ProductFragment();
+        Bundle args = new Bundle();
+        args.putString("USER_ID", userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +53,8 @@ public class ProductFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_product, container, false);
 
         if (getArguments() != null) {
-            categoryName = getArguments().getString("category");
+            userId = getArguments().getString("USER_ID");
+            Log.d("ProductFragment", "onCreate - Received userId: " + userId);
         }
 
         TextView toolbarTitle = view.findViewById(R.id.toolbarTitle);
@@ -148,7 +157,7 @@ public class ProductFragment extends Fragment {
                     for (Cart cart : cartItems) {
                         if (cart.getProductId() == Integer.parseInt(product.getId())) {
                             cart.setQuantity(cart.getQuantity() + 1);
-
+                            cart.setUserId(Integer.parseInt(userId));
                             // Gọi API cập nhật số lượng giỏ hàng
                             Call<Cart> call = cartService.updateCart(cart.getId(), cart);
                             call.enqueue(new Callback<Cart>() {
@@ -172,7 +181,7 @@ public class ProductFragment extends Fragment {
 
                     // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
                     if (!exists) {
-                        Cart newCart = new Cart("", 1, Integer.parseInt(product.getId()), 1); // userId = 1
+                        Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(product.getId()), 1);
                         Call<Cart> call = cartService.createCart(newCart);
                         call.enqueue(new Callback<Cart>() {
                             @Override
