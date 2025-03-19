@@ -27,4 +27,15 @@ public interface ProductService {
     Call<Void> deleteProduct(@Path("id") String id);
     @GET(PRODUCTS)
     Call<List<Product>> getProductsByCategory(@Query("category") String category);
+
+    @GET(PRODUCTS)
+    Call<List<Product>> searchProductsByName(@Query("name") String name);
+
+
+    @GET(PRODUCTS)
+    Call<List<Product>> searchProductsByBrand(@Query("brand") String brand);
+
+
+    @GET(PRODUCTS)
+    Call<List<Product>> searchProductsByCategory(@Query("category") String category);
 }

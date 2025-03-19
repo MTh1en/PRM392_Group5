@@ -9,6 +9,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,8 @@ public class ProductAdminFragment extends Fragment {
     private ProductAdapter productAdapter;
     private List<Product> productList;
     private FloatingActionButton fabAddProduct;
+    private SearchView searchView;
+    private Spinner spinnerSearchCriteria;
 
     public ProductAdminFragment() {
         // Required empty public constructor
@@ -48,15 +51,45 @@ public class ProductAdminFragment extends Fragment {
 
         productList = new ArrayList<>();
         productAdapter = new ProductAdapter(productList);
-        productAdapter.setOnProductClickListener(this::showUpdateProductDialog); // Thêm listener cho update
+        productAdapter.setOnProductClickListener(this::showUpdateProductDialog);
         recyclerView.setAdapter(productAdapter);
 
         fabAddProduct = view.findViewById(R.id.fabAddProduct);
         fabAddProduct.setOnClickListener(v -> showAddProductDialog());
 
+        searchView = view.findViewById(R.id.searchView);
+        spinnerSearchCriteria = view.findViewById(R.id.spinnerSearchCriteria);
+        setupSearchCriteriaSpinner();
+        setupSearchView();
+
         fetchAllProducts();
 
         return view;
+    }
+
+    private void setupSearchCriteriaSpinner() {
+        List<String> criteria = Arrays.asList("Name", "Brand", "Category");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, criteria);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSearchCriteria.setAdapter(adapter);
+    }
+
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchProducts(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    fetchAllProducts();
+                }
+                return true;
+            }
+        });
     }
 
     private void fetchAllProducts() {
@@ -82,13 +115,53 @@ public class ProductAdminFragment extends Fragment {
         });
     }
 
+    private void searchProducts(String query) {
+        ProductService productService = ProductRepo.getProductService();
+        Call<List<Product>> call;
+        String selectedCriteria = spinnerSearchCriteria.getSelectedItem().toString();
+
+        switch (selectedCriteria) {
+            case "Name":
+                call = productService.searchProductsByName(query);
+                break;
+            case "Brand":
+                call = productService.searchProductsByBrand(query);
+                break;
+            case "Category":
+                call = productService.searchProductsByCategory(query);
+                break;
+            default:
+                call = productService.getAllProducts(); // Trường hợp không chọn tiêu chí
+        }
+
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    productList.clear();
+                    productList.addAll(response.body());
+                    productAdapter.notifyDataSetChanged();
+                    if (productList.isEmpty()) {
+                        Toast.makeText(getContext(), "No products found", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "No products found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Toast.makeText(getContext(), "Search error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void showAddProductDialog() {
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_product, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(dialogView);
         builder.setTitle("Add New Product");
 
-        // Ánh xạ các trường
         TextInputEditText etProductName = dialogView.findViewById(R.id.etProductName);
         TextInputEditText etProductDescription = dialogView.findViewById(R.id.etProductDescription);
         TextInputEditText etOriginalPrice = dialogView.findViewById(R.id.etOriginalPrice);
@@ -98,14 +171,12 @@ public class ProductAdminFragment extends Fragment {
         TextInputEditText etImage = dialogView.findViewById(R.id.etImage);
         Spinner spinnerCategory = dialogView.findViewById(R.id.spinnerCategory);
 
-        // Danh sách các danh mục
         List<String> categories = Arrays.asList("PC Gaming", "Laptop", "Component", "Screen", "Keyboard", "Mouse");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
 
         builder.setPositiveButton("Add", (dialog, which) -> {
-            // Lấy dữ liệu từ các trường
             String name = etProductName.getText().toString().trim();
             String description = etProductDescription.getText().toString().trim();
             String originalPriceStr = etOriginalPrice.getText().toString().trim();
@@ -115,27 +186,22 @@ public class ProductAdminFragment extends Fragment {
             String image = etImage.getText().toString().trim();
             String category = spinnerCategory.getSelectedItem().toString();
 
-            // Kiểm tra dữ liệu bắt buộc
             if (name.isEmpty() || originalPriceStr.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Chuyển đổi dữ liệu
             double originalPrice = Double.parseDouble(originalPriceStr);
             float discountPercentage = discountPercentageStr.isEmpty() ? 0 : Float.parseFloat(discountPercentageStr);
             double discountedPrice = originalPrice * (1 - discountPercentage / 100);
             int stock = stockStr.isEmpty() ? 0 : Integer.parseInt(stockStr);
 
-            // Rating Count và Average Rating mặc định là 0
             int ratingCount = 0;
             float averageRating = 0;
 
-            // Tạo sản phẩm mới
             Product newProduct = new Product(null, name, description, originalPrice, discountedPrice,
                     discountPercentage, ratingCount, averageRating, brand, stock, image, category);
 
-            // Gửi lên API
             addProduct(newProduct);
         });
 
@@ -173,7 +239,6 @@ public class ProductAdminFragment extends Fragment {
         builder.setView(dialogView);
         builder.setTitle("Update Product");
 
-        // Ánh xạ các trường
         TextInputEditText etProductName = dialogView.findViewById(R.id.etProductName);
         TextInputEditText etProductDescription = dialogView.findViewById(R.id.etProductDescription);
         TextInputEditText etOriginalPrice = dialogView.findViewById(R.id.etOriginalPrice);
@@ -183,7 +248,6 @@ public class ProductAdminFragment extends Fragment {
         TextInputEditText etImage = dialogView.findViewById(R.id.etImage);
         Spinner spinnerCategory = dialogView.findViewById(R.id.spinnerCategory);
 
-        // Điền dữ liệu hiện tại của product
         etProductName.setText(product.getName());
         etProductDescription.setText(product.getDescription());
         etOriginalPrice.setText(String.valueOf(product.getOriginalPrice()));
@@ -192,7 +256,6 @@ public class ProductAdminFragment extends Fragment {
         etStock.setText(String.valueOf(product.getStock()));
         etImage.setText(product.getImage());
 
-        // Thiết lập Spinner
         List<String> categories = Arrays.asList("PC Gaming", "Laptop", "Component", "Screen", "Keyboard", "Mouse");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -200,7 +263,6 @@ public class ProductAdminFragment extends Fragment {
         spinnerCategory.setSelection(categories.indexOf(product.getCategory()));
 
         builder.setPositiveButton("Update", (dialog, which) -> {
-            // Lấy dữ liệu từ các trường
             String name = etProductName.getText().toString().trim();
             String description = etProductDescription.getText().toString().trim();
             String originalPriceStr = etOriginalPrice.getText().toString().trim();
@@ -210,28 +272,25 @@ public class ProductAdminFragment extends Fragment {
             String image = etImage.getText().toString().trim();
             String category = spinnerCategory.getSelectedItem().toString();
 
-            // Kiểm tra dữ liệu
             if (name.isEmpty() || originalPriceStr.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Chuyển đổi dữ liệu
             double originalPrice = Double.parseDouble(originalPriceStr);
             float discountPercentage = discountPercentageStr.isEmpty() ? 0 : Float.parseFloat(discountPercentageStr);
             double discountedPrice = originalPrice * (1 - discountPercentage / 100);
             int stock = stockStr.isEmpty() ? 0 : Integer.parseInt(stockStr);
 
-            // Tạo đối tượng product cập nhật
             Product updatedProduct = new Product(
-                    product.getId(), // Giữ nguyên ID
+                    product.getId(),
                     name,
                     description,
                     originalPrice,
                     discountedPrice,
                     discountPercentage,
-                    product.getRatingCount(), // Giữ nguyên rating
-                    product.getAverageRating(), // Giữ nguyên rating
+                    product.getRatingCount(),
+                    product.getAverageRating(),
                     brand,
                     stock,
                     image,

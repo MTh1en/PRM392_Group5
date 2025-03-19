@@ -149,6 +149,7 @@ public class ProfileFragment extends Fragment {
         updatedUser.setName(etNameInput.getText().toString());
         updatedUser.setAddress(etAddressInput.getText().toString());
         updatedUser.setPhone(etPhoneInput.getText().toString());
+        updatedUser.setActive(true);
 
         Call<User> call = UserRepo.getUserService().updateUser(userId, updatedUser);
         call.enqueue(new Callback<User>() {

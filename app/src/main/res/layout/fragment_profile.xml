@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:padding="24dp">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Profile Title -->
+        <!-- Profile Header -->
         <TextView
             android:id="@+id/tvProfileTitle"
             android:layout_width="wrap_content"
@@ -18,110 +19,168 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:text="Profile"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- Avatar với khung tròn -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="60dp"
+        app:strokeColor="#1976D2"
+        app:strokeWidth="2dp">
 
         <ImageView
             android:id="@+id/ivProfileImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:contentDescription="Profile Image"
             android:scaleType="centerCrop"
             android:src="@drawable/app_logo" />
 
-        <EditText
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Profile Information -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="Name">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etNameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Name"
             android:padding="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="Email">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmailInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
             android:enabled="false"
-            android:hint="Email"
             android:padding="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="Address">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etAddressInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Address"
             android:padding="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="Phone">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPhoneInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Phone"
             android:padding="12dp" />
-        <Button
-            android:id="@+id/btnEditProfile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Edit"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/tvChangePasswordTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="Change Password"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEditProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Edit Profile"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#1976D2"
+        app:cornerRadius="8dp"
+        android:padding="12dp" />
 
-        <EditText
+    <!-- Change Password Section -->
+    <TextView
+        android:id="@+id/tvChangePasswordTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Change Password"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="Current Password"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etOldPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Current Password"
             android:inputType="textPassword"
             android:padding="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="New Password"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etNewPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="New Password"
             android:inputType="textPassword"
             android:padding="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@style/TextAppearance.AppCompat.Small"
+        android:hint="Confirm New Password"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Confirm New Password"
             android:inputType="textPassword"
             android:padding="12dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/btnChangePassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Change Password"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white" />
-    </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#388E3C"
+        app:cornerRadius="8dp"
+        android:padding="12dp" />
 </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
