@@ -56,7 +56,7 @@ public class UserDashboard extends AppCompatActivity {
                 replaceFragment(new HomeFragment());
                 return true;
             } else if (item.getItemId() == R.id.categories) {
-                replaceFragment(new CategoriesFragment());
+                replaceFragment(CategoriesFragment.newInstance(userId));
                 return true;
             } else if (item.getItemId() == R.id.order) {
                 replaceFragment(OrderFragmentUser.newInstance(userId));

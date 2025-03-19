@@ -1,6 +1,7 @@
 package com.example.final_project_group5.fragment.user;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,7 @@ public class ProfileFragment extends Fragment {
         ivProfileImage = view.findViewById(R.id.ivProfileImage);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
-
+        Log.d("ProfileFragment", "User ID: " + userId);
         loadUserProfile();
         UserRepo.getUserService().getUser(userId).enqueue(new Callback<User>() {
             @Override
