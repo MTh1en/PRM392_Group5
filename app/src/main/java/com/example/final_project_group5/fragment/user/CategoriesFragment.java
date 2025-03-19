@@ -36,7 +36,7 @@ public class CategoriesFragment extends Fragment {
             userId = getArguments().getString("USER_ID");
         }
         categoriesContainer = view.findViewById(R.id.categoriesContainer);
-
+        Log.d("CartFragment", "onCreate - Received userId: " + userId);
         // Xử lý Toolbar
         ImageView btnBack = view.findViewById(R.id.btn_back);
         ImageView btnSearch = view.findViewById(R.id.btn_search);

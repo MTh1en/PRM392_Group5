@@ -2,9 +2,11 @@ package com.example.final_project_group5.fragment.user;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,48 +28,47 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
     private RecyclerView rvFeaturedProducts;
     private ProductAdapter productAdapter;
     private List<Product> productList;
     private MaterialButton btnViewMap;
+    private ImageView btnCart;
+    private String userId;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance(String userId) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("USER_ID", userId);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        if (getArguments() != null) {
+            userId = getArguments().getString("USER_ID");
+            Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId); // Thêm log này
+        }
+        Log.d("HomeFragment", "onCreate - Received userId: " + userId);
         // Ánh xạ RecyclerView
         rvFeaturedProducts = view.findViewById(R.id.rvFeaturedProducts);
         rvFeaturedProducts.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Ánh xạ nút Cart
+        btnCart = view.findViewById(R.id.btn_cart);
+        btnCart.setOnClickListener(v -> {
+            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.frame_layout1, cartFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
         // Ánh xạ nút View Map
         btnViewMap = view.findViewById(R.id.btnViewMap);
         btnViewMap.setOnClickListener(v -> openMap());

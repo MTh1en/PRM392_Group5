@@ -53,7 +53,7 @@ public class UserDashboard extends AppCompatActivity {
 
         binding.bottomNavigationViewUser.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.home) {
-                replaceFragment(new HomeFragment());
+                replaceFragment(HomeFragment.newInstance(userId));
                 return true;
             } else if (item.getItemId() == R.id.categories) {
                 replaceFragment(CategoriesFragment.newInstance(userId));
