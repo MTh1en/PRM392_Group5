@@ -39,10 +39,11 @@ public class ProductFragment extends Fragment {
     private GridLayout productGridLayout;
     public static List<Cart> cartItems = new ArrayList<>();
     private String userId;
-    public static ProductFragment newInstance(String userId) {
+    public static ProductFragment newInstance(String userId, String categoryName) {
         ProductFragment fragment = new ProductFragment();
         Bundle args = new Bundle();
         args.putString("USER_ID", userId);
+        args.putString("CATEGORY_NAME", categoryName); // Lưu categoryName vào Bundle
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,7 +55,9 @@ public class ProductFragment extends Fragment {
 
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
+            categoryName = getArguments().getString("CATEGORY_NAME");
             Log.d("ProductFragment", "onCreate - Received userId: " + userId);
+            Log.d("ProductFragment", "onCreate - Received categoryName: " + categoryName);
         }
 
         TextView toolbarTitle = view.findViewById(R.id.toolbarTitle);
@@ -216,7 +219,7 @@ public class ProductFragment extends Fragment {
 
                 FragmentManager fragmentManager = getParentFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, productDetailFragment)
+                        .replace(R.id.frame_layout1, productDetailFragment)
                         .addToBackStack(null)
                         .commit();
             });

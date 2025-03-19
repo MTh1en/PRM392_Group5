@@ -99,7 +99,7 @@ public class CategoriesFragment extends Fragment {
             categoryLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ProductFragment productFragment = ProductFragment.newInstance(userId); // Sử dụng userId trực tiếp
+                    ProductFragment productFragment = ProductFragment.newInstance(userId, categoryName); // Sử dụng userId trực tiếp
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.frame_layout1, productFragment)
                             .addToBackStack(null)
