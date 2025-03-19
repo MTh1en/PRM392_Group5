@@ -1,6 +1,7 @@
 package com.example.final_project_group5.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -189,15 +190,25 @@ public class Login extends AppCompatActivity {
 
     private void handleSuccessfulLogin(User user) {
         Intent intent;
-        if (user.getRole().equals("ADMIN")){
+        if (user.getRole().equals("ADMIN")) {
             intent = new Intent(Login.this, AdminDashboard.class);
-        }else{
+        } else {
             intent = new Intent(Login.this, UserDashboard.class);
         }
         intent.putExtra("USER_ID", user.getId());
         intent.putExtra("USER_EMAIL", user.getEmail());
         intent.putExtra("USER_NAME", user.getName());
+
+        // Lưu userId vào SharedPreferences
+        Log.d("UserDashboard", "Lấy userId từ SharedPreferences..."); // Thêm log này
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
+        Log.d("UserDashboard", "userId từ SharedPreferences: " + userId); // Thêm log này
+
+        Log.d("LoginActivity", "userId sau khi lưu: " + sharedPreferences.getString("userId", null));
+
         startActivity(intent);
         finish();
     }
+
 }

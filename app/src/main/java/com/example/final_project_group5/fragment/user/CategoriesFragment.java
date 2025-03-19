@@ -1,5 +1,7 @@
 package com.example.final_project_group5.fragment.user;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +37,10 @@ public class CategoriesFragment extends Fragment {
             // Xử lý tìm kiếm (có thể mở một SearchFragment sau này)
         });
         btnCart.setOnClickListener(v -> {
-            CartFragment cartFragment = new CartFragment();
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            String userId = sharedPreferences.getString("userId", null);
+
+            CartFragment cartFragment = CartFragment.newInstance(userId);
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.frame_layout1, cartFragment)
                     .addToBackStack(null)
