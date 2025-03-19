@@ -3,6 +3,7 @@ package com.example.final_project_group5.fragment.user;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,21 @@ public class CategoriesFragment extends Fragment {
     private GridLayout categoriesContainer;
     private List<String> categoryList;
     private List<Integer> categoryIconList;
-
+    private String userId;
+    public static CategoriesFragment newInstance(String userId) {
+        CategoriesFragment fragment = new CategoriesFragment();
+        Bundle args = new Bundle();
+        args.putString("USER_ID", userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
-
+        if (getArguments() != null) {
+            userId = getArguments().getString("USER_ID");
+        }
         categoriesContainer = view.findViewById(R.id.categoriesContainer);
 
         // Xử lý Toolbar
@@ -36,11 +46,12 @@ public class CategoriesFragment extends Fragment {
         btnSearch.setOnClickListener(v -> {
             // Xử lý tìm kiếm (có thể mở một SearchFragment sau này)
         });
+        Log.d("Category", "User ID: " + userId);
         btnCart.setOnClickListener(v -> {
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-            String userId = sharedPreferences.getString("userId", null);
+//            SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//            String userId = sharedPreferences.getString("USER_ID", null);
 
-            CartFragment cartFragment = CartFragment.newInstance(userId);
+            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.frame_layout1, cartFragment)
                     .addToBackStack(null)

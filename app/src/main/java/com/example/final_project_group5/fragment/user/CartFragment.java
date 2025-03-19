@@ -58,18 +58,13 @@ public class CartFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_cart, container, false);
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
             Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId); // Thêm log này
         }
         Log.d("CartFragment", "onCreate - Received userId: " + userId);
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cart, container, false);
-
         listViewCart = view.findViewById(R.id.listViewCart);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvEmptyCart = view.findViewById(R.id.tvEmptyCart);
