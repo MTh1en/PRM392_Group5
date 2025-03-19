@@ -1,6 +1,8 @@
 package com.example.final_project_group5.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
@@ -20,32 +22,35 @@ import com.example.final_project_group5.fragment.user.ProfileFragment;
 public class UserDashboard extends AppCompatActivity {
     ActivityUserDashboardBinding binding;
     String userId;
-    ImageView btnCart; // Thêm biến btnCart
+    ImageView btnCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
+        // Lấy userId từ Intent nếu có (khi chuyển từ Login)
         userId = getIntent().getStringExtra("USER_ID");
+        Log.d("UserDashboard", "Received userId from Intent: " + userId);
+
         binding = ActivityUserDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Ánh xạ btn_cart từ layout
         btnCart = findViewById(R.id.btn_cart);
 
-        // Mặc định hiển thị HomeFragment
         replaceFragment(new HomeFragment());
 
-        // Bắt sự kiện click cho btn_cart để mở CartFragment
         btnCart.setOnClickListener(v -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            String userId = sharedPreferences.getString("userId", null);
+
+            Log.d("UserDashboard", "Opening CartFragment with userId: " + userId);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout1, new CartFragment())
-                    .addToBackStack(null) // Cho phép quay lại màn hình trước đó
+                    .replace(R.id.frame_layout1, CartFragment.newInstance(userId)) // Kiểm tra dòng này
+                    .addToBackStack(null)
                     .commit();
         });
 
-        // Xử lý bottom navigation
         binding.bottomNavigationViewUser.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.home) {
                 replaceFragment(new HomeFragment());
@@ -54,7 +59,7 @@ public class UserDashboard extends AppCompatActivity {
                 replaceFragment(new CategoriesFragment());
                 return true;
             } else if (item.getItemId() == R.id.order) {
-                replaceFragment(new OrderFragmentUser()); // Hiển thị OrderFragment thay vì CartFragment
+                replaceFragment(OrderFragmentUser.newInstance(userId));
                 return true;
             } else if (item.getItemId() == R.id.profile) {
                 replaceFragment(ProfileFragment.newInstance(userId));
