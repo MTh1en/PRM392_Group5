@@ -97,34 +97,6 @@
         android:background="@android:color/holo_blue_dark"
         android:layout_marginBottom="15dp"/>
 
-    <!-- Chữ 'or' -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="or"
-        android:textSize="14sp"
-        android:textColor="#666666"
-        android:layout_gravity="center"
-        android:layout_marginBottom="10dp"/>
-
-    <!-- Nút Đăng nhập với Google -->
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Continue with Google"
-        android:background="@android:color/darker_gray"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="10dp"/>
-
-    <!-- Nút Đăng nhập với Apple -->
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Continue with Apple"
-        android:background="@android:color/darker_gray"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="15dp"/>
-
     <!-- Link Sign In -->
     <TextView
         android:id="@+id/alSignIn"

@@ -1,21 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <TextView
+    <!-- Toolbar giống trang Categories và Home -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarOrders"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Danh sách đơn hàng"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:padding="8dp"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/blue"
+        app:elevation="8dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetEnd="0dp">
 
-    <ListView
-        android:id="@+id/listViewOrders"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/back"
+                android:tint="@android:color/white"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Order"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/btn_search"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/search"
+                android:tint="@android:color/white"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Search" />
+
+            <ImageView
+                android:id="@+id/btn_cart"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/shoppinglist"
+                android:tint="@android:color/white"
+                android:contentDescription="Cart" />
+        </LinearLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!-- Nội dung chính -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ListView
+            android:id="@+id/listViewOrders"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
 </LinearLayout>
