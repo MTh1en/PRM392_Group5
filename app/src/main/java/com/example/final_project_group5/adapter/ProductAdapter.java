@@ -3,6 +3,7 @@ package com.example.final_project_group5.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +18,19 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private List<Product> productList;
+    private OnProductClickListener listener;
+
+    // Interface để xử lý sự kiện click
+    public interface OnProductClickListener {
+        void onUpdateClick(Product product);
+    }
 
     public ProductAdapter(List<Product> productList) {
         this.productList = productList;
+    }
+
+    public void setOnProductClickListener(OnProductClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -55,6 +66,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         } else {
             holder.ivProductImage.setImageResource(R.drawable.app_logo);
         }
+
+        // Xử lý sự kiện click nút edit
+        holder.btnEdit.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onUpdateClick(product);
+            }
+        });
     }
 
     @Override
@@ -66,6 +84,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         TextView tvProductName, tvProductDescription, tvOriginalPrice, tvDiscountedPriceAdmin,
                 tvDiscountPercentage, tvRatingCount, tvAverageRating, tvBrand, tvStock, tvCategory;
         ImageView ivProductImage;
+        ImageButton btnEdit; // Thêm nút edit
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,6 +99,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvStock = itemView.findViewById(R.id.tvStock);
             tvCategory = itemView.findViewById(R.id.tvCategory);
             ivProductImage = itemView.findViewById(R.id.ivProductImage);
+            btnEdit = itemView.findViewById(R.id.btnEdit); // Ánh xạ nút edit
         }
     }
 }
