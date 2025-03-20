@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.example.final_project_group5.R;
 import com.example.final_project_group5.databinding.ActivityUserDashboardBinding;
 import com.example.final_project_group5.fragment.user.CartFragment;
