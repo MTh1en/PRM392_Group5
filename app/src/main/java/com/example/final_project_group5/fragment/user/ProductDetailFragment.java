@@ -1,30 +1,42 @@
 package com.example.final_project_group5.fragment.user;
 
-import android.media.Rating;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.final_project_group5.R;
+import com.example.final_project_group5.adapter.FeedbackAdapter;
 import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.CartService;
+import com.example.final_project_group5.api.FeedbackService;
 import com.example.final_project_group5.api.ProductService;
+import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.Cart;
+import com.example.final_project_group5.entity.Feedback;
 import com.example.final_project_group5.entity.Product;
-import com.example.final_project_group5.fragment.user.ProductFragment;
+import com.example.final_project_group5.entity.User;
+import com.example.final_project_group5.repository.UserRepo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,21 +45,19 @@ import retrofit2.Response;
 public class ProductDetailFragment extends Fragment {
 
     private ImageView productImage;
-    private TextView productName;
-    private TextView ratingCount;
-    private TextView productPrice;
-    private TextView originalPrice;
-    private TextView discountPercentage;
-    private TextView brand;
-    private TextView stock;
-    private TextView productDescription;
+    private TextView productName, ratingCount, productPrice, originalPrice, discountPercentage, brand, stock, productDescription;
     private RatingBar ratingBar;
-    private Button addToCartButton;
+    private Button addToCartButton, btnSubmitFeedback;
+    private EditText etFeedbackTitle, etFeedbackComment;
+    private RatingBar rbFeedbackRating;
+    private RecyclerView rvFeedbacks;
+    private FeedbackAdapter feedbackAdapter;
     private String productId, userId;
     private Product currentProduct;
+    private List<Feedback> feedbackList = new ArrayList<>();
+    private Map<Integer, String> userMap = new HashMap<>();
 
     public ProductDetailFragment() {
-        // Required empty public constructor
     }
 
     public static ProductDetailFragment newInstance(String userId, String productId) {
@@ -60,15 +70,20 @@ public class ProductDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_product_detail, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
             productId = getArguments().getString("PRODUCT_ID");
+            Log.d("ProductDetailFragment", "onCreate - Received userId: " + userId);
+            Log.d("ProductDetailFragment", "onCreate - Received productId: " + productId);
         }
-        Log.d("ProductFragment", "userId: " + userId);
-        Log.d("ProductFragment", "productId: " + productId);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_product_detail, container, false);
+
         // Ánh xạ các thành phần UI
         productImage = view.findViewById(R.id.productImage);
         productName = view.findViewById(R.id.productName);
@@ -81,76 +96,86 @@ public class ProductDetailFragment extends Fragment {
         stock = view.findViewById(R.id.stock);
         productDescription = view.findViewById(R.id.productDescription);
         addToCartButton = view.findViewById(R.id.addToCartButton);
+        rvFeedbacks = view.findViewById(R.id.rvFeedbacks);
+        etFeedbackTitle = view.findViewById(R.id.etFeedbackTitle);
+        etFeedbackComment = view.findViewById(R.id.etFeedbackComment);
+        rbFeedbackRating = view.findViewById(R.id.rbFeedbackRating);
+        btnSubmitFeedback = view.findViewById(R.id.btnSubmitFeedback);
+
+        // Khởi tạo RecyclerView cho feedback
+        rvFeedbacks.setLayoutManager(new LinearLayoutManager(getContext()));
+        feedbackAdapter = new FeedbackAdapter(getContext(), feedbackList, userMap);
+        rvFeedbacks.setAdapter(feedbackAdapter);
 
         // Xử lý sự kiện nút Add to Cart
         addToCartButton.setOnClickListener(v -> {
-            if (currentProduct != null) {
+            if (currentProduct != null && userId != null) {
                 CartService cartService = ApiClient.getClient().create(CartService.class);
 
-                // Kiểm tra xem sản phẩm đã có trong giỏ hàng hay chưa
                 boolean exists = false;
                 for (Cart cart : ProductFragment.cartItems) {
                     if (cart.getProductId() == Integer.parseInt(currentProduct.getId())) {
                         cart.setQuantity(cart.getQuantity() + 1);
                         cart.setUserId(Integer.parseInt(userId));
-                        // Gọi API cập nhật số lượng giỏ hàng
                         Call<Cart> call = cartService.updateCart(cart.getId(), cart);
                         call.enqueue(new Callback<Cart>() {
                             @Override
                             public void onResponse(Call<Cart> call, Response<Cart> response) {
                                 if (response.isSuccessful()) {
                                     Toast.makeText(getContext(), "Cập nhật giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
-                                    Log.d("ProductDetailFragment", "Cart updated: " + response.body());
-                                } else {
-                                    Toast.makeText(getContext(), "Cập nhật giỏ hàng thất bại!", Toast.LENGTH_SHORT).show();
-                                    Log.e("ProductDetailFragment", "Update failed: " + response.code());
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<Cart> call, Throwable t) {
                                 Log.e("ProductDetailFragment", "Lỗi cập nhật giỏ hàng: " + t.getMessage());
-                                Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                             }
                         });
-
                         exists = true;
                         break;
                     }
                 }
 
-                // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
                 if (!exists) {
-                    Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(currentProduct.getId()), 1); // userId = 1 (giả định)
+                    Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(currentProduct.getId()), 1);
                     Call<Cart> call = cartService.createCart(newCart);
                     call.enqueue(new Callback<Cart>() {
                         @Override
                         public void onResponse(Call<Cart> call, Response<Cart> response) {
                             if (response.isSuccessful()) {
-                                ProductFragment.cartItems.add(response.body()); // Cập nhật danh sách giỏ hàng
+                                ProductFragment.cartItems.add(response.body());
                                 Toast.makeText(getContext(), "Thêm " + currentProduct.getName() + " vào giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
-                                Log.d("ProductDetailFragment", "Cart item added: " + response.body());
-                            } else {
-                                Toast.makeText(getContext(), "Thêm giỏ hàng thất bại!", Toast.LENGTH_SHORT).show();
-                                Log.e("ProductDetailFragment", "Add failed: " + response.code());
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Cart> call, Throwable t) {
                             Log.e("ProductDetailFragment", "Lỗi thêm giỏ hàng: " + t.getMessage());
-                            Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else {
-                Toast.makeText(getContext(), "Sản phẩm chưa được tải!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Sản phẩm hoặc tài khoản chưa được tải!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Load chi tiết sản phẩm
-        if (getArguments() != null) {
+        // Xử lý sự kiện gửi feedback
+        btnSubmitFeedback.setOnClickListener(v -> {
+            String title = etFeedbackTitle.getText().toString().trim();
+            String comment = etFeedbackComment.getText().toString().trim();
+            float rating = rbFeedbackRating.getRating();
+
+            if (!title.isEmpty() && !comment.isEmpty() && rating > 0 && userId != null && productId != null) {
+                submitFeedback(title, comment, rating);
+            } else {
+                Toast.makeText(getContext(), "Vui lòng nhập đầy đủ tiêu đề, nội dung và đánh giá!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Load chi tiết sản phẩm và feedback
+        if (productId != null) {
             loadProductDetails(productId);
+            loadFeedbacks(productId);
         }
 
         return view;
@@ -173,7 +198,6 @@ public class ProductDetailFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
-                t.printStackTrace();
                 Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
             }
         });
@@ -181,26 +205,20 @@ public class ProductDetailFragment extends Fragment {
 
     private void displayProductDetails(Product product) {
         if (product != null) {
-            // Hình ảnh sản phẩm
             if (product.getImage() != null && !product.getImage().isEmpty()) {
                 Glide.with(getContext())
                         .load(product.getImage())
-                        .placeholder(R.drawable.app_logo) // Ảnh mặc định nếu tải lỗi
-                        .error(R.drawable.button_background) // Ảnh lỗi nếu không tải được
+                        .placeholder(R.drawable.app_logo)
+                        .error(R.drawable.button_background)
                         .into(productImage);
             } else {
-                productImage.setImageResource(R.drawable.button_background); // Ảnh mặc định
+                productImage.setImageResource(R.drawable.button_background);
             }
 
-            // Tên sản phẩm
             productName.setText(product.getName() != null ? product.getName() : "Không có tên");
-
-            // Đánh giá
             ratingCount.setText("(" + (product.getRatingCount() >= 0 ? product.getRatingCount() : 0) + "+ đánh giá)");
             float ratingValue = Math.min((float) (product.getRatingCount() >= 0 ? product.getRatingCount() : 0), 5);
-            ratingBar.setRating(ratingValue); // Cập nhật RatingBar
-
-            // Giá sản phẩm
+            ratingBar.setRating(ratingValue);
             productPrice.setText(product.getDiscountedPrice() >= 0
                     ? String.format("%,.0fđ", product.getDiscountedPrice())
                     : "Liên hệ");
@@ -210,28 +228,21 @@ public class ProductDetailFragment extends Fragment {
             discountPercentage.setText(product.getDiscountPercentage() >= 0
                     ? "-" + (int) product.getDiscountPercentage() + "%"
                     : "");
-
-            // Thương hiệu và số lượng
             brand.setText(product.getBrand() != null && !product.getBrand().isEmpty()
                     ? product.getBrand()
                     : "N/A");
             stock.setText(product.getStock() >= 0
                     ? String.valueOf(product.getStock())
                     : "Hết hàng");
-
-            // Mô tả sản phẩm
             productDescription.setText(product.getDescription() != null && !product.getDescription().isEmpty()
                     ? product.getDescription()
                     : "Không có mô tả");
 
-            // Đảm bảo nút Add to Cart hiển thị
             addToCartButton.setVisibility(View.VISIBLE);
             Log.d("ProductDetailFragment", "addToCartButton visibility set to VISIBLE");
         } else {
             Log.e("ProductDetailFragment", "Product is null!");
             Toast.makeText(getContext(), "Không thể tải thông tin sản phẩm!", Toast.LENGTH_SHORT).show();
-
-            // Hiển thị giá trị mặc định khi product null
             productName.setText("Không có tên");
             ratingCount.setText("(0+ đánh giá)");
             ratingBar.setRating(0);
@@ -242,5 +253,100 @@ public class ProductDetailFragment extends Fragment {
             stock.setText("Hết hàng");
             productDescription.setText("Không có mô tả");
         }
+    }
+
+    private void loadFeedbacks(String productId) {
+        FeedbackService feedbackService = ApiClient.getClient().create(FeedbackService.class);
+        Call<List<Feedback>> call = feedbackService.getFeedbacksByProduct(Integer.parseInt(productId));
+
+        call.enqueue(new Callback<List<Feedback>>() {
+            @Override
+            public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    feedbackList.clear();
+                    feedbackList.addAll(response.body());
+                    loadUsernamesForFeedbacks(); // Tải username sau khi có danh sách feedback
+                } else {
+                    Log.e("ProductDetailFragment", "Failed to fetch feedbacks: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Feedback>> call, Throwable t) {
+                Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
+            }
+        });
+    }
+
+    private void loadUsernamesForFeedbacks() {
+        UserService userService = ApiClient.getClient().create(UserService.class);
+        List<Integer> userIds = new ArrayList<>();
+        for (Feedback feedback : feedbackList) {
+            if (!userMap.containsKey(feedback.getUserId())) {
+                userIds.add(feedback.getUserId());
+            }
+        }
+
+        if (userIds.isEmpty()) {
+            feedbackAdapter.updateFeedbacks(feedbackList);
+            return;
+        }
+
+        for (Integer userId : userIds) {
+
+            UserRepo.getUserService().getUser(String.valueOf(userId)).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        User user = response.body();
+                        userMap.put(Integer.parseInt(user.getId()), user.getName());
+                        // Cập nhật adapter khi tất cả username đã được tải
+                        if (userMap.size() == userIds.size()) {
+                            feedbackAdapter.updateFeedbacks(feedbackList);
+                            feedbackAdapter.updateUserMap(userMap);
+                        }
+                    } else {
+                        Log.e("ProductDetailFragment", "Failed to fetch user: " + response.code());
+                        userMap.put(userId, "Unknown User");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
+                    userMap.put(userId, "Unknown User");
+                }
+            });
+        }
+    }
+
+    private void submitFeedback(String title, String comment, float rating) {
+        FeedbackService feedbackService = ApiClient.getClient().create(FeedbackService.class);
+        String createAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        Feedback newFeedback = new Feedback("", Integer.parseInt(userId), Integer.parseInt(productId), title, comment, rating, createAt);
+        Call<Feedback> call = feedbackService.createFeedback(newFeedback);
+
+        call.enqueue(new Callback<Feedback>() {
+            @Override
+            public void onResponse(Call<Feedback> call, Response<Feedback> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    feedbackList.add(response.body());
+                    loadUsernamesForFeedbacks(); // Tải lại username cho feedback mới
+                    etFeedbackTitle.setText("");
+                    etFeedbackComment.setText("");
+                    rbFeedbackRating.setRating(0);
+                    Toast.makeText(getContext(), "Gửi bình luận thành công!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Gửi bình luận thất bại!", Toast.LENGTH_SHORT).show();
+                    Log.e("ProductDetailFragment", "Feedback submission failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Feedback> call, Throwable t) {
+                Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
+                Toast.makeText(getContext(), "Lỗi kết nối!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
