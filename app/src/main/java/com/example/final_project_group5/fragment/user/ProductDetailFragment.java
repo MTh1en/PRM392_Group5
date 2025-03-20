@@ -23,15 +23,20 @@ import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.CartService;
 import com.example.final_project_group5.api.FeedbackService;
 import com.example.final_project_group5.api.ProductService;
+import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.Cart;
 import com.example.final_project_group5.entity.Feedback;
 import com.example.final_project_group5.entity.Product;
+import com.example.final_project_group5.entity.User;
+import com.example.final_project_group5.repository.UserRepo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +55,7 @@ public class ProductDetailFragment extends Fragment {
     private String productId, userId;
     private Product currentProduct;
     private List<Feedback> feedbackList = new ArrayList<>();
+    private Map<Integer, String> userMap = new HashMap<>();
 
     public ProductDetailFragment() {
     }
@@ -98,7 +104,7 @@ public class ProductDetailFragment extends Fragment {
 
         // Khởi tạo RecyclerView cho feedback
         rvFeedbacks.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedbackAdapter = new FeedbackAdapter(getContext(), feedbackList);
+        feedbackAdapter = new FeedbackAdapter(getContext(), feedbackList, userMap);
         rvFeedbacks.setAdapter(feedbackAdapter);
 
         // Xử lý sự kiện nút Add to Cart
@@ -259,8 +265,7 @@ public class ProductDetailFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     feedbackList.clear();
                     feedbackList.addAll(response.body());
-                    feedbackAdapter.updateFeedbacks(feedbackList);
-                    Log.d("ProductDetailFragment", "Loaded " + feedbackList.size() + " feedbacks");
+                    loadUsernamesForFeedbacks(); // Tải username sau khi có danh sách feedback
                 } else {
                     Log.e("ProductDetailFragment", "Failed to fetch feedbacks: " + response.code());
                 }
@@ -271,6 +276,48 @@ public class ProductDetailFragment extends Fragment {
                 Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
             }
         });
+    }
+
+    private void loadUsernamesForFeedbacks() {
+        UserService userService = ApiClient.getClient().create(UserService.class);
+        List<Integer> userIds = new ArrayList<>();
+        for (Feedback feedback : feedbackList) {
+            if (!userMap.containsKey(feedback.getUserId())) {
+                userIds.add(feedback.getUserId());
+            }
+        }
+
+        if (userIds.isEmpty()) {
+            feedbackAdapter.updateFeedbacks(feedbackList);
+            return;
+        }
+
+        for (Integer userId : userIds) {
+
+            UserRepo.getUserService().getUser(String.valueOf(userId)).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        User user = response.body();
+                        userMap.put(Integer.parseInt(user.getId()), user.getName());
+                        // Cập nhật adapter khi tất cả username đã được tải
+                        if (userMap.size() == userIds.size()) {
+                            feedbackAdapter.updateFeedbacks(feedbackList);
+                            feedbackAdapter.updateUserMap(userMap);
+                        }
+                    } else {
+                        Log.e("ProductDetailFragment", "Failed to fetch user: " + response.code());
+                        userMap.put(userId, "Unknown User");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
+                    userMap.put(userId, "Unknown User");
+                }
+            });
+        }
     }
 
     private void submitFeedback(String title, String comment, float rating) {
@@ -284,7 +331,7 @@ public class ProductDetailFragment extends Fragment {
             public void onResponse(Call<Feedback> call, Response<Feedback> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     feedbackList.add(response.body());
-                    feedbackAdapter.notifyDataSetChanged();
+                    loadUsernamesForFeedbacks(); // Tải lại username cho feedback mới
                     etFeedbackTitle.setText("");
                     etFeedbackComment.setText("");
                     rbFeedbackRating.setRating(0);
