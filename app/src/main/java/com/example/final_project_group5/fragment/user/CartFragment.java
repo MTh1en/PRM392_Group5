@@ -212,7 +212,6 @@ public class CartFragment extends Fragment {
                 total += cart.getQuantity() * product.getDiscountedPrice();
             }
         }
-
         order.setOrderDetails(orderDetails);
         order.setTotalAmount(total);
 
@@ -254,6 +253,22 @@ public class CartFragment extends Fragment {
         builder.show();
     }
 
+    private void deleteCartAfterCreateOrder(List<Cart> cartItems){
+        for (Cart cart : cartItems){
+            CartRepo.getCartService().deleteCart(cart.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    Log.d("Cart", "Delete Cart Successfull");
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.d("Cart", "Delete Cart Fail");
+                }
+            });
+        }
+    }
+
     private void submitOrder(Order order) {
         Call<Order> call = OrderRepo.getOrderService().createOrder(order);
         call.enqueue(new Callback<Order>() {
@@ -277,5 +292,6 @@ public class CartFragment extends Fragment {
                 Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        deleteCartAfterCreateOrder(cartItems);
     }
 }
