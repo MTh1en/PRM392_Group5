@@ -5,66 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- Toolbar giống trang Categories -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbarHome"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/blue"
-        app:elevation="8dp"
-        app:contentInsetStart="0dp"
-        app:contentInsetEnd="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/back"
-                android:tint="@android:color/white"
-                android:contentDescription="Back" />
-
-            <TextView
-                android:id="@+id/toolbarTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Home"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/btn_search"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/search"
-                android:tint="@android:color/white"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="Search" />
-
-            <ImageView
-                android:id="@+id/btn_cart"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/shoppinglist"
-                android:tint="@android:color/white"
-                android:contentDescription="Cart" />
-        </LinearLayout>
-    </com.google.android.material.appbar.MaterialToolbar>
-
-    <!-- Banner ở dưới toolbar -->
+    <!-- Banner ở đầu màn hình -->
     <ImageView
         android:id="@+id/ivBannerHome"
         android:layout_width="0dp"
@@ -72,7 +13,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/banner_home"
         android:contentDescription="Home Banner"
-        app:layout_constraintTop_toBottomOf="@id/toolbarHome"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -37,7 +37,16 @@ public class ProductFragment extends Fragment {
 
     private String categoryName;
     private GridLayout productGridLayout;
-    public static List<Cart> cartItems = new ArrayList<>(); // Danh sách giỏ hàng lưu toàn cục
+    public static List<Cart> cartItems = new ArrayList<>();
+    private String userId;
+    public static ProductFragment newInstance(String userId, String categoryName) {
+        ProductFragment fragment = new ProductFragment();
+        Bundle args = new Bundle();
+        args.putString("USER_ID", userId);
+        args.putString("CATEGORY_NAME", categoryName); // Lưu categoryName vào Bundle
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,14 +54,11 @@ public class ProductFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_product, container, false);
 
         if (getArguments() != null) {
-            categoryName = getArguments().getString("category");
+            userId = getArguments().getString("USER_ID");
+            categoryName = getArguments().getString("CATEGORY_NAME");
+            Log.d("ProductFragment", "onCreate - Received userId: " + userId);
+            Log.d("ProductFragment", "onCreate - Received categoryName: " + categoryName);
         }
-
-        TextView toolbarTitle = view.findViewById(R.id.toolbarTitle);
-        toolbarTitle.setText(categoryName);
-
-        ImageView btnBack = view.findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
         productGridLayout = view.findViewById(R.id.productGridLayout);
         productGridLayout.setColumnCount(2);
@@ -71,6 +77,7 @@ public class ProductFragment extends Fragment {
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     displayProducts(response.body());
+                    Log.d("ProductFragment", "API response successful");
                 } else {
                     Log.e("ProductFragment", "API response failed: " + response.code());
                     Toast.makeText(getContext(), "Failed to load products", Toast.LENGTH_SHORT).show();
@@ -148,7 +155,7 @@ public class ProductFragment extends Fragment {
                     for (Cart cart : cartItems) {
                         if (cart.getProductId() == Integer.parseInt(product.getId())) {
                             cart.setQuantity(cart.getQuantity() + 1);
-
+                            cart.setUserId(Integer.parseInt(userId));
                             // Gọi API cập nhật số lượng giỏ hàng
                             Call<Cart> call = cartService.updateCart(cart.getId(), cart);
                             call.enqueue(new Callback<Cart>() {
@@ -172,7 +179,7 @@ public class ProductFragment extends Fragment {
 
                     // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
                     if (!exists) {
-                        Cart newCart = new Cart("", 1, Integer.parseInt(product.getId()), 1); // userId = 1
+                        Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(product.getId()), 1);
                         Call<Cart> call = cartService.createCart(newCart);
                         call.enqueue(new Callback<Cart>() {
                             @Override
@@ -192,22 +199,14 @@ public class ProductFragment extends Fragment {
                 }
             });
 
-
-            // Sự kiện nhấn vào sản phẩm để xem chi tiết
             productCard.setOnClickListener(v -> {
                 if (product.getId() == null) {
                     Toast.makeText(getContext(), "Product ID is missing", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("productId", product.getId());
-                productDetailFragment.setArguments(bundle);
-
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, productDetailFragment)
+                ProductDetailFragment productDetailFragment = ProductDetailFragment.newInstance(userId, product.getId()); // Sử dụng userId trực tiếp
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.frame_layout1, productDetailFragment)
                         .addToBackStack(null)
                         .commit();
             });

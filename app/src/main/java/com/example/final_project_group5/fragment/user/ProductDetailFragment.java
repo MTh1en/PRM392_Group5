@@ -1,5 +1,6 @@
 package com.example.final_project_group5.fragment.user;
 
+import android.media.Rating;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,39 +41,46 @@ public class ProductDetailFragment extends Fragment {
     private TextView brand;
     private TextView stock;
     private TextView productDescription;
-    private ImageView backButton;
+    private RatingBar ratingBar;
     private Button addToCartButton;
-    private String productId;
+    private String productId, userId;
     private Product currentProduct;
 
     public ProductDetailFragment() {
         // Required empty public constructor
     }
 
+    public static ProductDetailFragment newInstance(String userId, String productId) {
+        ProductDetailFragment fragment = new ProductDetailFragment();
+        Bundle args = new Bundle();
+        args.putString("USER_ID", userId);
+        args.putString("PRODUCT_ID", productId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_detail, container, false);
-
+        if (getArguments() != null) {
+            userId = getArguments().getString("USER_ID");
+            productId = getArguments().getString("PRODUCT_ID");
+        }
+        Log.d("ProductFragment", "userId: " + userId);
+        Log.d("ProductFragment", "productId: " + productId);
         // Ánh xạ các thành phần UI
         productImage = view.findViewById(R.id.productImage);
         productName = view.findViewById(R.id.productName);
         ratingCount = view.findViewById(R.id.ratingCount);
+        ratingBar = view.findViewById(R.id.ratingBar);
         productPrice = view.findViewById(R.id.productPrice);
         originalPrice = view.findViewById(R.id.originalPrice);
         discountPercentage = view.findViewById(R.id.discountPercentage);
         brand = view.findViewById(R.id.brand);
         stock = view.findViewById(R.id.stock);
         productDescription = view.findViewById(R.id.productDescription);
-        backButton = view.findViewById(R.id.backButton);
         addToCartButton = view.findViewById(R.id.addToCartButton);
-
-        // Xử lý sự kiện nút Back
-        backButton.setOnClickListener(v -> {
-            if (getFragmentManager() != null) {
-                getFragmentManager().popBackStack();
-            }
-        });
 
         // Xử lý sự kiện nút Add to Cart
         addToCartButton.setOnClickListener(v -> {
@@ -83,7 +92,7 @@ public class ProductDetailFragment extends Fragment {
                 for (Cart cart : ProductFragment.cartItems) {
                     if (cart.getProductId() == Integer.parseInt(currentProduct.getId())) {
                         cart.setQuantity(cart.getQuantity() + 1);
-
+                        cart.setUserId(Integer.parseInt(userId));
                         // Gọi API cập nhật số lượng giỏ hàng
                         Call<Cart> call = cartService.updateCart(cart.getId(), cart);
                         call.enqueue(new Callback<Cart>() {
@@ -112,7 +121,7 @@ public class ProductDetailFragment extends Fragment {
 
                 // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
                 if (!exists) {
-                    Cart newCart = new Cart("", 1, Integer.parseInt(currentProduct.getId()), 1); // userId = 1 (giả định)
+                    Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(currentProduct.getId()), 1); // userId = 1 (giả định)
                     Call<Cart> call = cartService.createCart(newCart);
                     call.enqueue(new Callback<Cart>() {
                         @Override
@@ -141,7 +150,6 @@ public class ProductDetailFragment extends Fragment {
 
         // Load chi tiết sản phẩm
         if (getArguments() != null) {
-            productId = getArguments().getString("productId");
             loadProductDetails(productId);
         }
 
@@ -173,15 +181,66 @@ public class ProductDetailFragment extends Fragment {
 
     private void displayProductDetails(Product product) {
         if (product != null) {
-            Glide.with(getContext()).load(product.getImage()).into(productImage);
-            productName.setText(product.getName());
-            ratingCount.setText("(" + product.getRatingCount() + "+ đánh giá)");
-            productPrice.setText(String.format("%,.0fđ", product.getDiscountedPrice()));
-            originalPrice.setText(String.format("%,.0fđ", product.getOriginalPrice()));
-            discountPercentage.setText("-" + (int) product.getDiscountPercentage() + "%");
-            brand.setText(product.getBrand());
-            stock.setText(String.valueOf(product.getStock()));
-            productDescription.setText(product.getDescription());
+            // Hình ảnh sản phẩm
+            if (product.getImage() != null && !product.getImage().isEmpty()) {
+                Glide.with(getContext())
+                        .load(product.getImage())
+                        .placeholder(R.drawable.app_logo) // Ảnh mặc định nếu tải lỗi
+                        .error(R.drawable.button_background) // Ảnh lỗi nếu không tải được
+                        .into(productImage);
+            } else {
+                productImage.setImageResource(R.drawable.button_background); // Ảnh mặc định
+            }
+
+            // Tên sản phẩm
+            productName.setText(product.getName() != null ? product.getName() : "Không có tên");
+
+            // Đánh giá
+            ratingCount.setText("(" + (product.getRatingCount() >= 0 ? product.getRatingCount() : 0) + "+ đánh giá)");
+            float ratingValue = Math.min((float) (product.getRatingCount() >= 0 ? product.getRatingCount() : 0), 5);
+            ratingBar.setRating(ratingValue); // Cập nhật RatingBar
+
+            // Giá sản phẩm
+            productPrice.setText(product.getDiscountedPrice() >= 0
+                    ? String.format("%,.0fđ", product.getDiscountedPrice())
+                    : "Liên hệ");
+            originalPrice.setText(product.getOriginalPrice() >= 0
+                    ? String.format("%,.0fđ", product.getOriginalPrice())
+                    : "");
+            discountPercentage.setText(product.getDiscountPercentage() >= 0
+                    ? "-" + (int) product.getDiscountPercentage() + "%"
+                    : "");
+
+            // Thương hiệu và số lượng
+            brand.setText(product.getBrand() != null && !product.getBrand().isEmpty()
+                    ? product.getBrand()
+                    : "N/A");
+            stock.setText(product.getStock() >= 0
+                    ? String.valueOf(product.getStock())
+                    : "Hết hàng");
+
+            // Mô tả sản phẩm
+            productDescription.setText(product.getDescription() != null && !product.getDescription().isEmpty()
+                    ? product.getDescription()
+                    : "Không có mô tả");
+
+            // Đảm bảo nút Add to Cart hiển thị
+            addToCartButton.setVisibility(View.VISIBLE);
+            Log.d("ProductDetailFragment", "addToCartButton visibility set to VISIBLE");
+        } else {
+            Log.e("ProductDetailFragment", "Product is null!");
+            Toast.makeText(getContext(), "Không thể tải thông tin sản phẩm!", Toast.LENGTH_SHORT).show();
+
+            // Hiển thị giá trị mặc định khi product null
+            productName.setText("Không có tên");
+            ratingCount.setText("(0+ đánh giá)");
+            ratingBar.setRating(0);
+            productPrice.setText("Liên hệ");
+            originalPrice.setText("");
+            discountPercentage.setText("");
+            brand.setText("N/A");
+            stock.setText("Hết hàng");
+            productDescription.setText("Không có mô tả");
         }
     }
 }

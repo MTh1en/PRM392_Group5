@@ -30,6 +30,7 @@ public class ProfileFragment extends Fragment {
     private ImageView ivProfileImage;
     private Button btnEditProfile, btnChangePassword;
     private String userId;
+    private ImageView btnCart;
     private boolean isEditing = false;
 
     public ProfileFragment() {
@@ -45,20 +46,13 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
+            Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId); // Thêm log này
         }
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        Log.d("HomeFragment", "onCreate - Received userId: " + userId);
         changePasswordTitle = view.findViewById(R.id.tvChangePasswordTitle);
         etNameInput = view.findViewById(R.id.etNameInput);
         etEmailInput = view.findViewById(R.id.etEmailInput);
@@ -94,6 +88,13 @@ public class ProfileFragment extends Fragment {
         });
         btnEditProfile.setOnClickListener(v -> toggleEditMode());
         btnChangePassword.setOnClickListener(v -> changePassword());
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     private void loadUserProfile() {

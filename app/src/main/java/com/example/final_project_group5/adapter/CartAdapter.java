@@ -77,6 +77,10 @@ public class CartAdapter extends BaseAdapter {
             double originalPrice = product.getOriginalPrice();
             int discountPercentage = getDiscountByProductId(cart.getProductId());
             double discountedPrice = originalPrice * (1 - discountPercentage / 100.0);
+            Log.d("CartAdapter", "Product: " + product.getName() +
+                    ", Original Price: " + originalPrice +
+                    ", Discount: " + discountPercentage + "%" +
+                    ", Discounted Price: " + discountedPrice);
 
             holder.tvOriginalPrice.setText(String.format("%.0fđ", originalPrice));
             holder.tvDiscountedPrice.setText(String.format("%.0fđ", discountedPrice));

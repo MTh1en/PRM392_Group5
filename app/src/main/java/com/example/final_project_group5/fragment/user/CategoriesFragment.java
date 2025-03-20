@@ -36,27 +36,8 @@ public class CategoriesFragment extends Fragment {
             userId = getArguments().getString("USER_ID");
         }
         categoriesContainer = view.findViewById(R.id.categoriesContainer);
-
-        // Xử lý Toolbar
-        ImageView btnBack = view.findViewById(R.id.btn_back);
-        ImageView btnSearch = view.findViewById(R.id.btn_search);
-        ImageView btnCart = view.findViewById(R.id.btn_cart);
-
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
-        btnSearch.setOnClickListener(v -> {
-            // Xử lý tìm kiếm (có thể mở một SearchFragment sau này)
-        });
+        Log.d("CartFragment", "onCreate - Received userId: " + userId);
         Log.d("Category", "User ID: " + userId);
-        btnCart.setOnClickListener(v -> {
-//            SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//            String userId = sharedPreferences.getString("USER_ID", null);
-
-            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout1, cartFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
 
         categoryList = new ArrayList<>();
         categoryIconList = new ArrayList<>();
@@ -102,12 +83,7 @@ public class CategoriesFragment extends Fragment {
             categoryLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("category", categoryName);
-
-                    ProductFragment productFragment = new ProductFragment();
-                    productFragment.setArguments(bundle);
-
+                    ProductFragment productFragment = ProductFragment.newInstance(userId, categoryName); // Sử dụng userId trực tiếp
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.frame_layout1, productFragment)
                             .addToBackStack(null)

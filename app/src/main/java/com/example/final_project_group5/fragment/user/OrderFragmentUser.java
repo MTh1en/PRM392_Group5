@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ public class OrderFragmentUser extends Fragment {
     private ListView listViewOrders;
     private List<Order> orderList = new ArrayList<>();
     private OrderAdapter orderAdapter;
+    private ImageView btnCart;
     private String userId;
 
     public OrderFragmentUser() {
@@ -45,19 +47,14 @@ public class OrderFragmentUser extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            userId = getArguments().getString("USER_ID");
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order, container, false);
-
+        if (getArguments() != null) {
+            userId = getArguments().getString("USER_ID");
+            Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId); // Thêm log này
+        }
+        Log.d("OrderFragmentUser", "onCreate - Received userId: " + userId);
         listViewOrders = view.findViewById(R.id.listViewOrders);
-        fetchOrders();
 
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
