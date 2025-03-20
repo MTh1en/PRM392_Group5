@@ -1,44 +1,44 @@
 package com.example.final_project_group5.fragment.admin;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.final_project_group5.R;
+import com.example.final_project_group5.adapter.OrderAdapterAdmin;
+import com.example.final_project_group5.api.OrderService;
+import com.example.final_project_group5.entity.Order;
+import com.example.final_project_group5.repository.OrderRepo;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OrderFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class OrderFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private RecyclerView rvOrders;
+    private OrderAdapterAdmin orderAdapter;
+    private List<Order> orderList;
 
     public OrderFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OrderFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static OrderFragment newInstance(String param1, String param2) {
         OrderFragment fragment = new OrderFragment();
         Bundle args = new Bundle();
@@ -60,7 +60,46 @@ public class OrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order, container, false);
+        View view = inflater.inflate(R.layout.fragment_order, container, false);
+
+        // Ánh xạ RecyclerView
+        rvOrders = view.findViewById(R.id.rvOrders);
+        rvOrders.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Khởi tạo danh sách và adapter
+        orderList = new ArrayList<>();
+        orderAdapter = new OrderAdapterAdmin(orderList);
+        rvOrders.setAdapter(orderAdapter);
+
+        // Fetch tất cả đơn hàng
+        fetchAllOrders();
+
+        return view;
+    }
+
+    private void fetchAllOrders() {
+        OrderService orderService = OrderRepo.getOrderService();
+        Call<List<Order>> call = orderService.getAllOrders();
+
+        call.enqueue(new Callback<List<Order>>() {
+            @Override
+            public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    orderList.clear();
+                    orderList.addAll(response.body());
+                    orderAdapter.notifyDataSetChanged();
+                    if (orderList.isEmpty()) {
+                        Toast.makeText(getContext(), "No orders found", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Failed to load orders", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Order>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
