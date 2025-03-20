@@ -1,9 +1,9 @@
 package com.example.final_project_group5.activity;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +23,7 @@ public class UserDashboard extends AppCompatActivity {
     ActivityUserDashboardBinding binding;
     String userId, userName;
     ImageView btnCart;
+    ImageButton btnLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,13 @@ public class UserDashboard extends AppCompatActivity {
                     .replace(R.id.frame_layout1, CartFragment.newInstance(userId)) // Kiểm tra dòng này
                     .addToBackStack(null)
                     .commit();
+        });
+
+        btnLogout = findViewById(R.id.btn_logout);
+        btnLogout.setOnClickListener(view -> {
+            Intent intent = new Intent(UserDashboard.this, Login.class);
+            startActivity(intent);
+            finish();
         });
 
         binding.bottomNavigationViewUser.setOnItemSelectedListener(item -> {

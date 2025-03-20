@@ -45,6 +45,16 @@
                 android:padding="4dp"
                 android:src="@drawable/shoppinglist"
                 android:tint="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/btn_logout"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Đăng nhập"
+                android:src="@drawable/icon_logout"
+            android:background="@android:color/transparent"
+            android:tint="@android:color/white" />
         </LinearLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 
