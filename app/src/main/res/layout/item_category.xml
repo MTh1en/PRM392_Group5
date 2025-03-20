@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:layout_weight="1"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:layout_margin="4dp"
-    android:gravity="center">
+    android:background="@drawable/category_background"
+    android:gravity="center"
+    android:padding="16dp"
+
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/categoryIcon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/app_logo" />
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/app_logo"
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/categoryTextView"
@@ -19,6 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Category Name"
         android:textColor="@color/black"
-        android:textSize="14sp" />
-
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
 </LinearLayout>
