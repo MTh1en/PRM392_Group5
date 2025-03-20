@@ -41,21 +41,34 @@ public class ProductDetailFragment extends Fragment {
     private TextView brand;
     private TextView stock;
     private TextView productDescription;
-    private ImageView backButton;
     private RatingBar ratingBar;
     private Button addToCartButton;
-    private String productId;
+    private String productId, userId;
     private Product currentProduct;
 
     public ProductDetailFragment() {
         // Required empty public constructor
     }
 
+    public static ProductDetailFragment newInstance(String userId, String productId) {
+        ProductDetailFragment fragment = new ProductDetailFragment();
+        Bundle args = new Bundle();
+        args.putString("USER_ID", userId);
+        args.putString("PRODUCT_ID", productId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_detail, container, false);
-
+        if (getArguments() != null) {
+            userId = getArguments().getString("USER_ID");
+            productId = getArguments().getString("PRODUCT_ID");
+        }
+        Log.d("ProductFragment", "userId: " + userId);
+        Log.d("ProductFragment", "productId: " + productId);
         // Ánh xạ các thành phần UI
         productImage = view.findViewById(R.id.productImage);
         productName = view.findViewById(R.id.productName);
@@ -67,15 +80,7 @@ public class ProductDetailFragment extends Fragment {
         brand = view.findViewById(R.id.brand);
         stock = view.findViewById(R.id.stock);
         productDescription = view.findViewById(R.id.productDescription);
-        backButton = view.findViewById(R.id.btn_back);
         addToCartButton = view.findViewById(R.id.addToCartButton);
-
-        // Xử lý sự kiện nút Back
-        backButton.setOnClickListener(v -> {
-            if (getFragmentManager() != null) {
-                getFragmentManager().popBackStack();
-            }
-        });
 
         // Xử lý sự kiện nút Add to Cart
         addToCartButton.setOnClickListener(v -> {
@@ -87,7 +92,7 @@ public class ProductDetailFragment extends Fragment {
                 for (Cart cart : ProductFragment.cartItems) {
                     if (cart.getProductId() == Integer.parseInt(currentProduct.getId())) {
                         cart.setQuantity(cart.getQuantity() + 1);
-
+                        cart.setUserId(Integer.parseInt(userId));
                         // Gọi API cập nhật số lượng giỏ hàng
                         Call<Cart> call = cartService.updateCart(cart.getId(), cart);
                         call.enqueue(new Callback<Cart>() {
@@ -116,7 +121,7 @@ public class ProductDetailFragment extends Fragment {
 
                 // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
                 if (!exists) {
-                    Cart newCart = new Cart("", 1, Integer.parseInt(currentProduct.getId()), 1); // userId = 1 (giả định)
+                    Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(currentProduct.getId()), 1); // userId = 1 (giả định)
                     Call<Cart> call = cartService.createCart(newCart);
                     call.enqueue(new Callback<Cart>() {
                         @Override
@@ -145,7 +150,6 @@ public class ProductDetailFragment extends Fragment {
 
         // Load chi tiết sản phẩm
         if (getArguments() != null) {
-            productId = getArguments().getString("productId");
             loadProductDetails(productId);
         }
 

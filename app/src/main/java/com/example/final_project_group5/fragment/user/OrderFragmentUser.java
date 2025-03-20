@@ -56,16 +56,6 @@ public class OrderFragmentUser extends Fragment {
         Log.d("OrderFragmentUser", "onCreate - Received userId: " + userId);
         listViewOrders = view.findViewById(R.id.listViewOrders);
 
-        btnCart = view.findViewById(R.id.btn_cart);
-        btnCart.setOnClickListener(v -> {
-            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout1, cartFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-        fetchOrders();
-
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

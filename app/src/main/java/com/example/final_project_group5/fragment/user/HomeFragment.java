@@ -60,15 +60,6 @@ public class HomeFragment extends Fragment {
         rvFeaturedProducts = view.findViewById(R.id.rvFeaturedProducts);
         rvFeaturedProducts.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Ánh xạ nút Cart
-        btnCart = view.findViewById(R.id.btn_cart);
-        btnCart.setOnClickListener(v -> {
-            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout1, cartFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
         // Ánh xạ nút View Map
         btnViewMap = view.findViewById(R.id.btnViewMap);
         btnViewMap.setOnClickListener(v -> openMap());

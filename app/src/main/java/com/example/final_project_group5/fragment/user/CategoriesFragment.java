@@ -37,23 +37,7 @@ public class CategoriesFragment extends Fragment {
         }
         categoriesContainer = view.findViewById(R.id.categoriesContainer);
         Log.d("CartFragment", "onCreate - Received userId: " + userId);
-        // Xử lý Toolbar
-        ImageView btnBack = view.findViewById(R.id.btn_back);
-        ImageView btnSearch = view.findViewById(R.id.btn_search);
-        ImageView btnCart = view.findViewById(R.id.btn_cart);
-
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
-        btnSearch.setOnClickListener(v -> {
-            // Xử lý tìm kiếm (có thể mở một SearchFragment sau này)
-        });
         Log.d("Category", "User ID: " + userId);
-        btnCart.setOnClickListener(v -> {
-            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout1, cartFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
 
         categoryList = new ArrayList<>();
         categoryIconList = new ArrayList<>();

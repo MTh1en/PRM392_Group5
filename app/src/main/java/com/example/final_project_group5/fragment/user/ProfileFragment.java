@@ -64,7 +64,6 @@ public class ProfileFragment extends Fragment {
         ivProfileImage = view.findViewById(R.id.ivProfileImage);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
-        btnCart = view.findViewById(R.id.btn_cart);
         Log.d("ProfileFragment", "User ID: " + userId);
         loadUserProfile();
         UserRepo.getUserService().getUser(userId).enqueue(new Callback<User>() {
@@ -89,13 +88,6 @@ public class ProfileFragment extends Fragment {
         });
         btnEditProfile.setOnClickListener(v -> toggleEditMode());
         btnChangePassword.setOnClickListener(v -> changePassword());
-        btnCart.setOnClickListener(v -> {
-            CartFragment cartFragment = CartFragment.newInstance(userId); // Sử dụng userId trực tiếp
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout1, cartFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
         return view;
     }
 

@@ -60,12 +60,6 @@ public class ProductFragment extends Fragment {
             Log.d("ProductFragment", "onCreate - Received categoryName: " + categoryName);
         }
 
-        TextView toolbarTitle = view.findViewById(R.id.toolbarTitle);
-        toolbarTitle.setText(categoryName);
-
-        ImageView btnBack = view.findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
-
         productGridLayout = view.findViewById(R.id.productGridLayout);
         productGridLayout.setColumnCount(2);
 
@@ -83,6 +77,7 @@ public class ProductFragment extends Fragment {
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     displayProducts(response.body());
+                    Log.d("ProductFragment", "API response successful");
                 } else {
                     Log.e("ProductFragment", "API response failed: " + response.code());
                     Toast.makeText(getContext(), "Failed to load products", Toast.LENGTH_SHORT).show();
@@ -204,21 +199,13 @@ public class ProductFragment extends Fragment {
                 }
             });
 
-
-            // Sự kiện nhấn vào sản phẩm để xem chi tiết
             productCard.setOnClickListener(v -> {
                 if (product.getId() == null) {
                     Toast.makeText(getContext(), "Product ID is missing", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("productId", product.getId());
-                productDetailFragment.setArguments(bundle);
-
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
+                ProductDetailFragment productDetailFragment = ProductDetailFragment.newInstance(userId, product.getId()); // Sử dụng userId trực tiếp
+                getParentFragmentManager().beginTransaction()
                         .replace(R.id.frame_layout1, productDetailFragment)
                         .addToBackStack(null)
                         .commit();

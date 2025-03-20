@@ -39,10 +39,9 @@ public class CartFragment extends Fragment {
     private ListView listViewCart;
     private TextView tvTotal, tvEmptyCart;
     private Button btnCheckout;
-    private ImageView backButton;
     private LinearLayout footerLayout;
     private CartAdapter cartAdapter;
-    private List<Cart> cartItems = ProductFragment.cartItems;
+    private List<Cart> cartItems = new ArrayList<>();
     private List<Product> productList = new ArrayList<>();
     private String userId;
     private boolean isViewInitialized = false;
@@ -63,23 +62,15 @@ public class CartFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
-            Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId); // Thêm log này
         }
-        Log.d("CartFragment", "onCreate - Received userId: " + userId);
+        Log.d("CartFragment", "userId" + userId);
         listViewCart = view.findViewById(R.id.listViewCart);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvEmptyCart = view.findViewById(R.id.tvEmptyCart);
         btnCheckout = view.findViewById(R.id.btnCheckout);
-        backButton = view.findViewById(R.id.backButton);
         footerLayout = view.findViewById(R.id.footerLayout);
 
         isViewInitialized = true;
-
-        backButton.setOnClickListener(v -> {
-            if (getFragmentManager() != null) {
-                getFragmentManager().popBackStack();
-            }
-        });
 
         btnCheckout.setOnClickListener(v -> {
             if (cartItems.isEmpty()) {
@@ -102,6 +93,7 @@ public class CartFragment extends Fragment {
             updateCartView();
         }
     }
+
     private void fetchCartByUserId(int userId) {
         Call<List<Cart>> call = CartRepo.getCartService().getCartsByUser(userId);
         call.enqueue(new Callback<List<Cart>>() {
@@ -112,7 +104,7 @@ public class CartFragment extends Fragment {
                     cartItems.addAll(response.body());
                     updateCartView();
                 } else {
-                    Toast.makeText(getContext(), "Lỗi khi lấy giỏ hàng", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Giỏ Hàng chưa có gì", Toast.LENGTH_SHORT).show();
                 }
             }
 
