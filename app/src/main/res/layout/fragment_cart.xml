@@ -66,4 +66,12 @@
             android:textColor="#FFFFFF"
             android:padding="12dp" />
     </LinearLayout>
+
+    <!-- WebView để hiển thị giao diện thanh toán VNPAY -->
+    <WebView
+        android:id="@+id/webview_payment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </LinearLayout>
