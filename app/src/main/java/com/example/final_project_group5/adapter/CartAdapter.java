@@ -71,7 +71,6 @@ public class CartAdapter extends BaseAdapter {
             // Hiển thị thông tin sản phẩm trong giỏ hàng
             Glide.with(context).load(product.getImage()).into(holder.ivProductImage);
             holder.tvProductName.setText(product.getName());
-//            holder.tvProductSpecs.setText(product.getDescription());
 
             // Tính toán giá giảm
             double originalPrice = product.getOriginalPrice();
@@ -115,6 +114,9 @@ public class CartAdapter extends BaseAdapter {
                             cartList.remove(position);
                             notifyDataSetChanged();
                             Toast.makeText(context, "Xóa sản phẩm thành công!", Toast.LENGTH_SHORT).show();
+                            if (cartUpdateListener != null) {
+                                cartUpdateListener.onCartUpdated();
+                            }
                         } else {
                             Toast.makeText(context, "Lỗi khi xóa sản phẩm!", Toast.LENGTH_SHORT).show();
                         }
@@ -177,14 +179,13 @@ public class CartAdapter extends BaseAdapter {
     // ViewHolder giúp tối ưu hiệu suất ListView
     private static class ViewHolder {
         ImageView ivProductImage;
-        TextView tvProductName, tvProductSpecs, tvOriginalPrice, tvDiscountedPrice, tvDiscount, tvQuantity;
+        TextView tvProductName, tvOriginalPrice, tvDiscountedPrice, tvDiscount, tvQuantity;
         Button btnDecrease, btnIncrease;
         ImageButton btnDelete;
 
         ViewHolder(View view) {
             ivProductImage = view.findViewById(R.id.ivProductImage);
             tvProductName = view.findViewById(R.id.tvProductName);
-//            tvProductSpecs = view.findViewById(R.id.tvProductSpecs);
             tvOriginalPrice = view.findViewById(R.id.tvOriginalPrice);
             tvDiscountedPrice = view.findViewById(R.id.tvDiscountedPrice);
             tvDiscount = view.findViewById(R.id.tvDiscount);
