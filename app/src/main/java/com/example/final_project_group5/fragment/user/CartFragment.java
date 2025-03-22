@@ -15,11 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.final_project_group5.activity.Config;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.final_project_group5.R;
+import com.example.final_project_group5.activity.Config;
+import com.example.final_project_group5.activity.Login;
 import com.example.final_project_group5.activity.PaymentResult;
 import com.example.final_project_group5.activity.VNPay;
 import com.example.final_project_group5.adapter.CartAdapter;
@@ -28,6 +30,7 @@ import com.example.final_project_group5.entity.Order;
 import com.example.final_project_group5.entity.OrderDetail;
 import com.example.final_project_group5.entity.Product;
 import com.example.final_project_group5.repository.CartRepo;
+import com.example.final_project_group5.repository.OrderRepo;
 import com.example.final_project_group5.repository.ProductRepo;
 
 import java.text.SimpleDateFormat;
@@ -89,30 +92,8 @@ public class CartFragment extends Fragment {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (url.contains("techgear-test.com/return")) {
+                if (url.contains("myapp://vnpay_return")) { // Sửa thành myapp://vnpay_return
                     handlePaymentResult(url);
-                    webView.setVisibility(View.GONE);
-                    listViewCart.setVisibility(View.VISIBLE);
-                    footerLayout.setVisibility(View.VISIBLE);
-
-                    String paymentStatus = "FAILED";
-                    String transactionNo = "N/A";
-                    String orderId = currentOrderId;
-
-                    if (url.contains("vnp_ResponseCode=00")) {
-                        paymentStatus = "SUCCESS";
-                        transactionNo = getQueryParam(url, "vnp_TransactionNo");
-                        orderId = getQueryParam(url, "vnp_TxnRef");
-                    } else if (url.contains("vnp_ResponseCode") || url.contains("error") || url.contains("cancel")) {
-                        paymentStatus = "FAILED";
-                    }
-
-                    Intent intent = new Intent(getActivity(), PaymentResult.class);
-                    intent.putExtra("PAYMENT_STATUS", paymentStatus);
-                    intent.putExtra("TRANSACTION_NO", transactionNo != null ? transactionNo : "N/A");
-                    intent.putExtra("ORDER_ID", orderId != null ? orderId : currentOrderId);
-                    intent.putExtra("USER_ID", userId);
-                    startActivity(intent);
                 }
             }
 
@@ -136,6 +117,12 @@ public class CartFragment extends Fragment {
 
                     if (vnp_SecureHash != null && validateSignature(responseParams, vnp_SecureHash)) {
                         Log.d("CartFragment", "Chữ ký hợp lệ");
+                        // Thanh toán thành công, xóa giỏ hàng trên MockAPI
+                        deleteCartAfterCreateOrder(cartItems);
+                        // Gửi đơn hàng lên server
+                        if (pendingOrder != null) {
+                            submitOrder(pendingOrder);
+                        }
                     } else {
                         Log.e("CartFragment", "Chữ ký không hợp lệ");
                         paymentStatus = "FAILED";
@@ -151,7 +138,6 @@ public class CartFragment extends Fragment {
                 intent.putExtra("USER_ID", userId);
                 startActivity(intent);
             }
-
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
@@ -185,6 +171,53 @@ public class CartFragment extends Fragment {
         return view;
     }
 
+    private void deleteCartAfterCreateOrder(List<Cart> cartItems) {
+        for (Cart cart : cartItems) {
+            CartRepo.getCartService().deleteCart(cart.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("CartFragment", "Đã xóa mục giỏ hàng trên MockAPI: " + cart.getId());
+                    } else {
+                        Log.e("CartFragment", "Lỗi khi xóa mục giỏ hàng trên MockAPI: " + cart.getId());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("CartFragment", "Lỗi kết nối khi xóa mục giỏ hàng: " + t.getMessage());
+                }
+            });
+        }
+
+        // Xóa giỏ hàng trên giao diện
+        cartItems.clear();
+        updateCartView();
+    }
+
+    private void submitOrder(Order order) {
+        Call<Order> call = OrderRepo.getOrderService().createOrder(order);
+        call.enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Call<Order> call, Response<Order> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
+                    // Chuyển đến OrderFragmentUser
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.frame_layout1, OrderFragmentUser.newInstance(userId))
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    Toast.makeText(getContext(), "Failed to create order", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Order> call, Throwable t) {
+                Toast.makeText(getContext(), "Lỗi kết nối khi tạo đơn hàng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private String getQueryParam(String url, String param) {
         try {
@@ -208,6 +241,13 @@ public class CartFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (isViewInitialized) {
+            if (userId == null || userId.isEmpty()) {
+                Toast.makeText(getContext(), "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), Login.class);
+                startActivity(intent);
+                getActivity().finish();
+                return;
+            }
             fetchCartByUserId(Integer.parseInt(userId));
             updateCartView();
         }
@@ -332,6 +372,7 @@ public class CartFragment extends Fragment {
                 originalTotal += cart.getQuantity() * product.getDiscountedPrice(); // Tính giá trị gốc
             }
         }
+
         order.setOrderDetails(orderDetails);
         order.setTotalAmount(originalTotal * 100); // Lưu giá trị đã nhân 100 vào Order
 
@@ -371,7 +412,6 @@ public class CartFragment extends Fragment {
         builder.show();
     }
 
-
     private void initiateVNPayPayment(Order order) {
         try {
             long amount = (long) order.getTotalAmount();
@@ -379,8 +419,10 @@ public class CartFragment extends Fragment {
             currentOrderId = "ORDER_" + System.currentTimeMillis();
             String paymentUrl = VNPay.createPaymentUrl(amount, orderInfo, currentOrderId);
             Log.d("CartFragment", "Payment URL: " + paymentUrl);
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(paymentUrl));
-            startActivity(intent);
+            webView.loadUrl(paymentUrl);
+            webView.setVisibility(View.VISIBLE);
+            listViewCart.setVisibility(View.GONE);
+            footerLayout.setVisibility(View.GONE);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Lỗi khi tạo URL thanh toán: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -398,39 +440,6 @@ public class CartFragment extends Fragment {
                     if (pair.length > 1) {
                         params.put(pair[0], pair[1]);
                     }
-
-    private void deleteCartAfterCreateOrder(List<Cart> cartItems){
-        for (Cart cart : cartItems){
-            CartRepo.getCartService().deleteCart(cart.getId()).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    Log.d("Cart", "Delete Cart Successfull");
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Log.d("Cart", "Delete Cart Fail");
-                }
-            });
-        }
-    }
-
-    private void submitOrder(Order order) {
-        Call<Order> call = OrderRepo.getOrderService().createOrder(order);
-        call.enqueue(new Callback<Order>() {
-            @Override
-            public void onResponse(Call<Order> call, Response<Order> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
-                    cartItems.clear();
-                    updateCartView();
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.frame_layout1, OrderFragmentUser.newInstance(userId))
-                            .addToBackStack(null)
-                            .commit();
-                } else {
-                    Toast.makeText(getContext(), "Failed to create order", Toast.LENGTH_SHORT).show();
-
                 }
             }
         } catch (Exception e) {
@@ -457,7 +466,6 @@ public class CartFragment extends Fragment {
                 dataToHash.append(fieldName).append("=").append(fieldValue);
             }
 
-
             String generatedHash = VNPay.hmacSHA512(vnp_HashSecret, dataToHash.toString());
 
             return generatedHash.equals(vnp_SecureHash);
@@ -466,9 +474,4 @@ public class CartFragment extends Fragment {
             return false;
         }
     }
-
-        });
-        deleteCartAfterCreateOrder(cartItems);
-
-    }
-
+}
