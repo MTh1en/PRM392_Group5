@@ -187,6 +187,66 @@
                 android:textSize="16sp"
                 android:textColor="#424242"
                 android:lineSpacingExtra="4dp" />
+
+            <!-- Feedback Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Bình luận"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#212121" />
+
+            <!-- Feedback Input (Di chuyển lên trên danh sách) -->
+            <EditText
+                android:id="@+id/etFeedbackTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Tiêu đề bình luận"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/etFeedbackComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Nội dung bình luận"
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text"
+                android:textSize="16sp"
+                android:minLines="3" />
+
+            <RatingBar
+                android:id="@+id/rbFeedbackRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:numStars="5"
+                android:stepSize="1.0"
+                android:rating="0" />
+
+            <Button
+                android:id="@+id/btnSubmitFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_gravity="end"
+                android:backgroundTint="#008000"
+                android:text="Gửi"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:padding="10dp" />
+
+            <!-- Danh sách Feedbacks -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFeedbacks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

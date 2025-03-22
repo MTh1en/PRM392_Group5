@@ -332,7 +332,6 @@ public class CartFragment extends Fragment {
                 originalTotal += cart.getQuantity() * product.getDiscountedPrice(); // Tính giá trị gốc
             }
         }
-
         order.setOrderDetails(orderDetails);
         order.setTotalAmount(originalTotal * 100); // Lưu giá trị đã nhân 100 vào Order
 
@@ -372,6 +371,7 @@ public class CartFragment extends Fragment {
         builder.show();
     }
 
+
     private void initiateVNPayPayment(Order order) {
         try {
             long amount = (long) order.getTotalAmount();
@@ -398,6 +398,39 @@ public class CartFragment extends Fragment {
                     if (pair.length > 1) {
                         params.put(pair[0], pair[1]);
                     }
+
+    private void deleteCartAfterCreateOrder(List<Cart> cartItems){
+        for (Cart cart : cartItems){
+            CartRepo.getCartService().deleteCart(cart.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    Log.d("Cart", "Delete Cart Successfull");
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.d("Cart", "Delete Cart Fail");
+                }
+            });
+        }
+    }
+
+    private void submitOrder(Order order) {
+        Call<Order> call = OrderRepo.getOrderService().createOrder(order);
+        call.enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Call<Order> call, Response<Order> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
+                    cartItems.clear();
+                    updateCartView();
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.frame_layout1, OrderFragmentUser.newInstance(userId))
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    Toast.makeText(getContext(), "Failed to create order", Toast.LENGTH_SHORT).show();
+
                 }
             }
         } catch (Exception e) {
@@ -424,6 +457,7 @@ public class CartFragment extends Fragment {
                 dataToHash.append(fieldName).append("=").append(fieldValue);
             }
 
+
             String generatedHash = VNPay.hmacSHA512(vnp_HashSecret, dataToHash.toString());
 
             return generatedHash.equals(vnp_SecureHash);
@@ -432,5 +466,9 @@ public class CartFragment extends Fragment {
             return false;
         }
     }
+
+        });
+        deleteCartAfterCreateOrder(cartItems);
+
     }
 

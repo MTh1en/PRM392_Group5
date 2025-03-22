@@ -32,7 +32,6 @@ public class OrderFragmentUser extends Fragment {
     private ListView listViewOrders;
     private List<Order> orderList = new ArrayList<>();
     private OrderAdapter orderAdapter;
-    private ImageView btnCart;
     private String userId;
 
     public OrderFragmentUser() {
@@ -63,7 +62,7 @@ public class OrderFragmentUser extends Fragment {
                 showOrderDetail(selectedOrder);
             }
         });
-
+        fetchOrders();
         return view;
     }
 
