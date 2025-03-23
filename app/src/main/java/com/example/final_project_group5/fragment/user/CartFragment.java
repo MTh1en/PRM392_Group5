@@ -97,6 +97,25 @@ public class CartFragment extends Fragment {
                 }
             }
 
+            private void createOrder(Order order) {
+                Call<Order> call = OrderRepo.getOrderService().createOrder(order);
+                call.enqueue(new Callback<Order>() {
+                    @Override
+                    public void onResponse(Call<Order> call, Response<Order> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("CartFragment", "Order created successfully on MockAPI: " + response.body().toString());
+                        } else {
+                            Log.e("CartFragment", "Failed to create order on MockAPI: " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Order> call, Throwable t) {
+                        Log.e("CartFragment", "Error connecting to MockAPI: " + t.getMessage());
+                    }
+                });
+            }
+
             private void handlePaymentResult(String url) {
                 webView.setVisibility(View.GONE);
                 listViewCart.setVisibility(View.VISIBLE);
@@ -117,11 +136,11 @@ public class CartFragment extends Fragment {
 
                     if (vnp_SecureHash != null && validateSignature(responseParams, vnp_SecureHash)) {
                         Log.d("CartFragment", "Chữ ký hợp lệ");
-                        // Thanh toán thành công, xóa giỏ hàng trên MockAPI
+                        paymentStatus = "SUCCESS";
+                        // Thanh toán thành công, xóa giỏ hàng và tạo Order trên MockAPI
                         deleteCartAfterCreateOrder(cartItems);
-                        // Gửi đơn hàng lên server
                         if (pendingOrder != null) {
-                            submitOrder(pendingOrder);
+                            createOrder(pendingOrder);
                         }
                     } else {
                         Log.e("CartFragment", "Chữ ký không hợp lệ");
@@ -131,6 +150,7 @@ public class CartFragment extends Fragment {
                     paymentStatus = "FAILED";
                 }
 
+                // Chuyển hướng đến PaymentResult
                 Intent intent = new Intent(getActivity(), PaymentResult.class);
                 intent.putExtra("PAYMENT_STATUS", paymentStatus);
                 intent.putExtra("TRANSACTION_NO", transactionNo != null ? transactionNo : "N/A");
@@ -195,29 +215,32 @@ public class CartFragment extends Fragment {
         updateCartView();
     }
 
-    private void submitOrder(Order order) {
-        Call<Order> call = OrderRepo.getOrderService().createOrder(order);
-        call.enqueue(new Callback<Order>() {
-            @Override
-            public void onResponse(Call<Order> call, Response<Order> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
-                    // Chuyển đến OrderFragmentUser
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.frame_layout1, OrderFragmentUser.newInstance(userId))
-                            .addToBackStack(null)
-                            .commit();
-                } else {
-                    Toast.makeText(getContext(), "Failed to create order", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Order> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi kết nối khi tạo đơn hàng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void submitOrder(Order order) {
+//        Call<Order> call = OrderRepo.getOrderService().createOrder(order);
+//        call.enqueue(new Callback<Order>() {
+//            @Override
+//            public void onResponse(Call<Order> call, Response<Order> response) {
+//                if (response.isSuccessful()) {
+//                    Toast.makeText(getContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
+//                    new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+//                        if (isAdded() && getActivity() != null) {
+//                            getFragmentManager().beginTransaction()
+//                                    .replace(R.id.frame_layout1, OrderFragmentUser.newInstance(userId))
+//                                    .addToBackStack(null)
+//                                    .commit();
+//                        }
+//                    });
+//                } else {
+//                    Toast.makeText(getContext(), "Failed to create order", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Order> call, Throwable t) {
+//                Toast.makeText(getContext(), "Lỗi kết nối khi tạo đơn hàng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private String getQueryParam(String url, String param) {
         try {
