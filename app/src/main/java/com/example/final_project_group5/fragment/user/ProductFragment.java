@@ -123,7 +123,7 @@ public class ProductFragment extends Fragment {
             productCard.addView(productNameTextView);
 
             TextView productPriceTextView = new TextView(getContext());
-            productPriceTextView.setText(product.getDiscountedPrice() + "đ");
+            productPriceTextView.setText(String.format("%.0f", product.getDiscountedPrice()) + " VND");
             productPriceTextView.setTextColor(Color.RED);
             productPriceTextView.setPadding(8, 4, 8, 0);
             productCard.addView(productPriceTextView);
