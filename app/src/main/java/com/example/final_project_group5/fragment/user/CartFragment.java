@@ -137,9 +137,10 @@ public class CartFragment extends Fragment {
                     if (vnp_SecureHash != null && validateSignature(responseParams, vnp_SecureHash)) {
                         Log.d("CartFragment", "Chữ ký hợp lệ");
                         paymentStatus = "SUCCESS";
-                        // Thanh toán thành công, xóa giỏ hàng và tạo Order trên MockAPI
-                        deleteCartAfterCreateOrder(cartItems);
+                        // Thanh toán thành công, cập nhật paymentStatus và tạo Order
                         if (pendingOrder != null) {
+                            pendingOrder.setPaymentStatus("Success"); // Cập nhật paymentStatus thành "Success"
+                            deleteCartAfterCreateOrder(cartItems);
                             createOrder(pendingOrder);
                         }
                     } else {

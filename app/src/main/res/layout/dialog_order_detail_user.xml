@@ -1,31 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Order Date -->
     <TextView
         android:id="@+id/tvOrderDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Order Date" />
+        android:text="Order Date"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
 
+    <!-- Shipping Address -->
     <TextView
         android:id="@+id/tvShippingAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Shipping Address" />
+        android:text="Shipping Address"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
 
+    <!-- Total Amount -->
     <TextView
         android:id="@+id/tvTotalAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total Amount" />
+        android:text="Total Amount"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
 
+    <!-- Payment Status -->
+    <TextView
+        android:id="@+id/tvPaymentStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payment Status"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
+
+    <!-- Shipping Status -->
+    <TextView
+        android:id="@+id/tvShippingStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Shipping Status"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
+
+    <!-- Order Items -->
     <TextView
         android:id="@+id/tvOrderItems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Order Items" />
+        android:text="Order Items"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
 
 </LinearLayout>

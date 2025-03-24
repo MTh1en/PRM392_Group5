@@ -50,7 +50,7 @@ public class OrderFragmentUser extends Fragment {
         View view = inflater.inflate(R.layout.fragment_order_user, container, false);
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
-            Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId); // Thêm log này
+            Log.d("CartFragment", "onCreate - Received userId from Bundle: " + userId);
         }
         Log.d("OrderFragmentUser", "onCreate - Received userId: " + userId);
         listViewOrders = view.findViewById(R.id.listViewOrders);
@@ -106,16 +106,20 @@ public class OrderFragmentUser extends Fragment {
             TextView tvOrderDate = dialogView.findViewById(R.id.tvOrderDate);
             TextView tvShippingAddress = dialogView.findViewById(R.id.tvShippingAddress);
             TextView tvTotalAmount = dialogView.findViewById(R.id.tvTotalAmount);
+            TextView tvPaymentStatus = dialogView.findViewById(R.id.tvPaymentStatus);
+            TextView tvShippingStatus = dialogView.findViewById(R.id.tvShippingStatus);
             TextView tvOrderItems = dialogView.findViewById(R.id.tvOrderItems);
 
             tvOrderDate.setText("Order Date: " + order.getOrderDate());
             tvShippingAddress.setText("Shipping Address: " + order.getShippingAddress());
             tvTotalAmount.setText("Total Amount: " + order.getTotalAmount());
+            tvPaymentStatus.setText("Payment Status: " + (order.getPaymentStatus() != null ? order.getPaymentStatus() : "N/A"));
+            tvShippingStatus.setText("Shipping Status: " + (order.getShippingStatus() != null ? order.getShippingStatus() : "N/A"));
 
             StringBuilder orderItems = new StringBuilder();
-            List<OrderDetail> orderDetails = order.getOrderDetails(); // Lấy danh sách OrderDetail
+            List<OrderDetail> orderDetails = order.getOrderDetails();
 
-            if (orderDetails != null && !orderDetails.isEmpty()) { // Kiểm tra null và rỗng
+            if (orderDetails != null && !orderDetails.isEmpty()) {
                 for (OrderDetail detail : orderDetails) {
                     orderItems.append("Product: ").append(detail.getProductName()).append("\n");
                     orderItems.append("Quantity: ").append(detail.getQuantity()).append("\n");
@@ -123,7 +127,7 @@ public class OrderFragmentUser extends Fragment {
                 }
                 tvOrderItems.setText(orderItems.toString());
             } else {
-                tvOrderItems.setText("No items in order."); // Hiển thị thông báo khi rỗng
+                tvOrderItems.setText("No items in order.");
             }
 
             builder.setView(dialogView);
