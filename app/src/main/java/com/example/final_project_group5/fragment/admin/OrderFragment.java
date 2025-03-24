@@ -68,8 +68,11 @@ public class OrderFragment extends Fragment {
 
         // Khởi tạo danh sách và adapter
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapterAdmin(orderList);
+        orderAdapter = new OrderAdapterAdmin(getContext(), orderList); // Truyền getContext() vào constructor
         rvOrders.setAdapter(orderAdapter);
+
+        // Đăng ký listener để làm mới danh sách khi trạng thái được cập nhật
+        orderAdapter.setOnStatusUpdateListener(this::fetchAllOrders);
 
         // Fetch tất cả đơn hàng
         fetchAllOrders();
