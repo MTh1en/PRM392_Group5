@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset Password"
+        android:text="Verify OTP"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
@@ -30,43 +30,54 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter your email to reset your password"
+        android:text="Enter the OTP sent to your phone"
         android:textSize="14sp"
         android:layout_marginTop="4dp"
         android:textColor="#666666"
         android:layout_gravity="center"/>
 
-    <!-- Email Input -->
+    <!-- OTP Input -->
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etOtp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Enter your email"
-        android:inputType="textEmailAddress"
+        android:hint="Enter OTP"
+        android:inputType="number"
         android:background="@android:drawable/editbox_background"
         android:padding="12dp"
         android:layout_marginTop="24dp"/>
 
-    <!-- Request OTP Button -->
-    <Button
-        android:id="@+id/btnRequestOtp"
+    <!-- New Password Input -->
+    <EditText
+        android:id="@+id/etNewPassword"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Request OTP"
+        android:hint="Enter new password"
+        android:inputType="textPassword"
+        android:background="@android:drawable/editbox_background"
+        android:padding="12dp"
+        android:layout_marginTop="12dp"/>
+
+    <!-- Confirm Password Input -->
+    <EditText
+        android:id="@+id/etConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Confirm new password"
+        android:inputType="textPassword"
+        android:background="@android:drawable/editbox_background"
+        android:padding="12dp"
+        android:layout_marginTop="12dp"/>
+
+    <!-- Reset Password Button -->
+    <Button
+        android:id="@+id/btnResetPassword"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Reset Password"
         android:backgroundTint="#1877F2"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:layout_marginTop="16dp"/>
-
-    <!-- Back to Login Link -->
-    <TextView
-        android:id="@+id/tvBackToLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back to Login"
-        android:textSize="14sp"
-        android:textColor="#007AFF"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center"/>
 
 </LinearLayout>
