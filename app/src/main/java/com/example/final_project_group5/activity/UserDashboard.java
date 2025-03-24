@@ -38,7 +38,6 @@ public class UserDashboard extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         btnCart = findViewById(R.id.btn_cart);
-        String userName = "User"; // Thay bằng tên thực tế nếu có
         binding.tvGreeting.setText("Xin chào " + userName + "!      --- Home ---");
         replaceFragment(HomeFragment.newInstance(userId));
 

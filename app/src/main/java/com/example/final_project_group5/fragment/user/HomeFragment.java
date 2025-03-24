@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.final_project_group5.R;
+import com.example.final_project_group5.activity.MapActivity;
+import com.example.final_project_group5.activity.UserDashboard;
 import com.example.final_project_group5.adapter.ProductAdapter;
 import com.example.final_project_group5.api.ProductService;
 import com.example.final_project_group5.entity.Product;
@@ -97,14 +99,16 @@ public class HomeFragment extends Fragment {
     }
 
     private void openMap() {
-        String uri = "geo:10.7769,106.7009?q=Ho+Chi+Minh+City";
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(uri));
-        mapIntent.setPackage("com.google.android.apps.maps");
-        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivity(mapIntent);
-        } else {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://maps.google.com/?q=Ho+Chi+Minh+City"));
-            startActivity(browserIntent);
-        }
+//        String uri = "geo:10.7769,106.7009?q=Ho+Chi+Minh+City";
+//        Intent mapIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(uri));
+//        mapIntent.setPackage("com.google.android.apps.maps");
+//        if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+//            startActivity(mapIntent);
+//        } else {
+//            Intent browserIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://maps.google.com/?q=Ho+Chi+Minh+City"));
+//            startActivity(browserIntent);
+//        }
+        Intent intent = new Intent(getActivity(), MapActivity.class);
+        startActivity(intent);
     }
 }
