@@ -1,22 +1,27 @@
 package com.example.final_project_group5.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.final_project_group5.R;
+import com.example.final_project_group5.api.OrderService;
 import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.Order;
 import com.example.final_project_group5.entity.OrderDetail;
 import com.example.final_project_group5.entity.User;
+import com.example.final_project_group5.repository.OrderRepo;
 import com.example.final_project_group5.repository.UserRepo;
 
 import java.util.HashMap;
@@ -31,10 +36,22 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
 
     private List<Order> orderList;
     private Map<Integer, User> userCache; // Cache để lưu thông tin người dùng đã lấy
+    private OnStatusUpdateListener statusUpdateListener;
+    private Context context; // Thêm Context để sử dụng trong Toast
 
-    public OrderAdapterAdmin(List<Order> orderList) {
+    // Interface để thông báo khi trạng thái được cập nhật
+    public interface OnStatusUpdateListener {
+        void onStatusUpdated();
+    }
+
+    public OrderAdapterAdmin(Context context, List<Order> orderList) {
+        this.context = context; // Lưu Context từ constructor
         this.orderList = orderList;
         this.userCache = new HashMap<>();
+    }
+
+    public void setOnStatusUpdateListener(OnStatusUpdateListener listener) {
+        this.statusUpdateListener = listener;
     }
 
     @NonNull
@@ -57,6 +74,23 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
         holder.tvDiscountAmount.setText("Discount: $" + String.format("%.2f", order.getDiscountAmount()));
         holder.tvPaymentStatus.setText("Payment Status: " + order.getPaymentStatus());
         holder.tvShippingStatus.setText("Shipping Status: " + order.getShippingStatus());
+
+        // Hiển thị và cấu hình nút Update Status
+        String shippingStatus = order.getShippingStatus();
+        if ("Pending".equals(shippingStatus)) {
+            holder.btnUpdateStatus.setVisibility(View.VISIBLE);
+            holder.btnUpdateStatus.setText("Mark as Success");
+        } else if ("Success".equals(shippingStatus)) {
+            holder.btnUpdateStatus.setVisibility(View.VISIBLE);
+            holder.btnUpdateStatus.setText("Mark as Pending");
+        } else {
+            holder.btnUpdateStatus.setVisibility(View.GONE);
+        }
+
+        // Xử lý sự kiện click nút Update Status
+        holder.btnUpdateStatus.setOnClickListener(v -> {
+            updateShippingStatus(order, position);
+        });
 
         // Lấy thông tin người dùng từ userId
         int userIdInt = order.getUserId();
@@ -153,6 +187,36 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
         }
     }
 
+    private void updateShippingStatus(Order order, int position) {
+        OrderService orderService = OrderRepo.getOrderService();
+        String currentStatus = order.getShippingStatus();
+        String newStatus = "Pending".equals(currentStatus) ? "Success" : "Pending"; // Chuyển đổi trạng thái
+        order.setShippingStatus(newStatus); // Cập nhật trạng thái mới
+        Call<Order> call = orderService.updateOrder(order.getId(), order);
+
+        call.enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Call<Order> call, Response<Order> response) {
+                if (response.isSuccessful()) {
+                    // Cập nhật danh sách và thông báo cho fragment
+                    orderList.set(position, response.body());
+                    notifyItemChanged(position);
+                    Toast.makeText(context, "Shipping status updated to " + newStatus, Toast.LENGTH_SHORT).show();
+                    if (statusUpdateListener != null) {
+                        statusUpdateListener.onStatusUpdated();
+                    }
+                } else {
+                    Toast.makeText(context, "Failed to update status", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Order> call, Throwable t) {
+                Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public int getItemCount() {
         return orderList != null ? orderList.size() : 0;
@@ -163,6 +227,7 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
                 tvShippingFee, tvDiscountAmount, tvPaymentStatus, tvShippingStatus, tvOrderDetailsTitle;
         LinearLayout llOrderDetails;
         ProgressBar pbUserLoading;
+        Button btnUpdateStatus;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -179,6 +244,7 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
             tvOrderDetailsTitle = itemView.findViewById(R.id.tvOrderDetailsTitle);
             llOrderDetails = itemView.findViewById(R.id.llOrderDetails);
             pbUserLoading = itemView.findViewById(R.id.pbUserLoading);
+            btnUpdateStatus = itemView.findViewById(R.id.btnUpdateStatus);
         }
     }
 }
