@@ -11,33 +11,27 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.final_project_group5.R;
 import com.example.final_project_group5.adapter.FeedbackAdapter;
 import com.example.final_project_group5.api.ApiClient;
 import com.example.final_project_group5.api.CartService;
 import com.example.final_project_group5.api.FeedbackService;
-import com.example.final_project_group5.api.ProductService;
-import com.example.final_project_group5.api.UserService;
 import com.example.final_project_group5.entity.Cart;
 import com.example.final_project_group5.entity.Feedback;
 import com.example.final_project_group5.entity.Product;
-import com.example.final_project_group5.entity.User;
-import com.example.final_project_group5.repository.UserRepo;
+import com.example.final_project_group5.repository.CartRepo;
+import com.example.final_project_group5.repository.FeedbackRepo;
+import com.example.final_project_group5.repository.ProductRepo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,8 +48,9 @@ public class ProductDetailFragment extends Fragment {
     private FeedbackAdapter feedbackAdapter;
     private String productId, userId;
     private Product currentProduct;
+
+    private List<Cart> cartItems = new ArrayList<>();
     private List<Feedback> feedbackList = new ArrayList<>();
-    private Map<Integer, String> userMap = new HashMap<>();
 
     public ProductDetailFragment() {
     }
@@ -104,20 +99,21 @@ public class ProductDetailFragment extends Fragment {
 
         // Khởi tạo RecyclerView cho feedback
         rvFeedbacks.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedbackAdapter = new FeedbackAdapter(getContext(), feedbackList, userMap);
+        feedbackAdapter = new FeedbackAdapter(getContext(), feedbackList);
         rvFeedbacks.setAdapter(feedbackAdapter);
+
+        loadCartItems();
 
         // Xử lý sự kiện nút Add to Cart
         addToCartButton.setOnClickListener(v -> {
             if (currentProduct != null && userId != null) {
-                CartService cartService = ApiClient.getClient().create(CartService.class);
 
                 boolean exists = false;
-                for (Cart cart : ProductFragment.cartItems) {
+                for (Cart cart : cartItems) {
                     if (cart.getProductId() == Integer.parseInt(currentProduct.getId())) {
                         cart.setQuantity(cart.getQuantity() + 1);
                         cart.setUserId(Integer.parseInt(userId));
-                        Call<Cart> call = cartService.updateCart(cart.getId(), cart);
+                        Call<Cart> call = CartRepo.getCartService().updateCart(cart.getId(), cart);
                         call.enqueue(new Callback<Cart>() {
                             @Override
                             public void onResponse(Call<Cart> call, Response<Cart> response) {
@@ -138,7 +134,7 @@ public class ProductDetailFragment extends Fragment {
 
                 if (!exists) {
                     Cart newCart = new Cart("", Integer.parseInt(userId), Integer.parseInt(currentProduct.getId()), 1);
-                    Call<Cart> call = cartService.createCart(newCart);
+                    Call<Cart> call = CartRepo.getCartService().createCart(newCart);
                     call.enqueue(new Callback<Cart>() {
                         @Override
                         public void onResponse(Call<Cart> call, Response<Cart> response) {
@@ -182,8 +178,7 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void loadProductDetails(String productId) {
-        ProductService productService = ApiClient.getClient().create(ProductService.class);
-        Call<Product> call = productService.getProduct(productId);
+        Call<Product> call = ProductRepo.getProductService().getProduct(productId);
 
         call.enqueue(new Callback<Product>() {
             @Override
@@ -256,18 +251,14 @@ public class ProductDetailFragment extends Fragment {
     }
 
     private void loadFeedbacks(String productId) {
-        FeedbackService feedbackService = ApiClient.getClient().create(FeedbackService.class);
-        Call<List<Feedback>> call = feedbackService.getFeedbacksByProduct(Integer.parseInt(productId));
-
+        Call<List<Feedback>> call = FeedbackRepo.getFeedbackService().getFeedbacksByProduct(Integer.parseInt(productId));
         call.enqueue(new Callback<List<Feedback>>() {
             @Override
             public void onResponse(Call<List<Feedback>> call, Response<List<Feedback>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     feedbackList.clear();
-                    feedbackList.addAll(response.body());
-                    loadUsernamesForFeedbacks(); // Tải username sau khi có danh sách feedback
-                } else {
-                    Log.e("ProductDetailFragment", "Failed to fetch feedbacks: " + response.code());
+                    feedbackList.addAll(response.body().subList(0, Math.min(10, response.body().size())));
+                    feedbackAdapter.updateFeedbacks(feedbackList);
                 }
             }
 
@@ -278,47 +269,6 @@ public class ProductDetailFragment extends Fragment {
         });
     }
 
-    private void loadUsernamesForFeedbacks() {
-        UserService userService = ApiClient.getClient().create(UserService.class);
-        List<Integer> userIds = new ArrayList<>();
-        for (Feedback feedback : feedbackList) {
-            if (!userMap.containsKey(feedback.getUserId())) {
-                userIds.add(feedback.getUserId());
-            }
-        }
-
-        if (userIds.isEmpty()) {
-            feedbackAdapter.updateFeedbacks(feedbackList);
-            return;
-        }
-
-        for (Integer userId : userIds) {
-
-            UserRepo.getUserService().getUser(String.valueOf(userId)).enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        User user = response.body();
-                        userMap.put(Integer.parseInt(user.getId()), user.getName());
-                        // Cập nhật adapter khi tất cả username đã được tải
-                        if (userMap.size() == userIds.size()) {
-                            feedbackAdapter.updateFeedbacks(feedbackList);
-                            feedbackAdapter.updateUserMap(userMap);
-                        }
-                    } else {
-                        Log.e("ProductDetailFragment", "Failed to fetch user: " + response.code());
-                        userMap.put(userId, "Unknown User");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
-                    userMap.put(userId, "Unknown User");
-                }
-            });
-        }
-    }
 
     private void submitFeedback(String title, String comment, float rating) {
         FeedbackService feedbackService = ApiClient.getClient().create(FeedbackService.class);
@@ -331,7 +281,7 @@ public class ProductDetailFragment extends Fragment {
             public void onResponse(Call<Feedback> call, Response<Feedback> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     feedbackList.add(response.body());
-                    loadUsernamesForFeedbacks(); // Tải lại username cho feedback mới
+                    feedbackAdapter.updateFeedbacks(feedbackList);
                     etFeedbackTitle.setText("");
                     etFeedbackComment.setText("");
                     rbFeedbackRating.setRating(0);
@@ -346,6 +296,25 @@ public class ProductDetailFragment extends Fragment {
             public void onFailure(Call<Feedback> call, Throwable t) {
                 Log.e("ProductDetailFragment", "API call failed: " + t.getMessage());
                 Toast.makeText(getContext(), "Lỗi kết nối!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void loadCartItems() {
+        CartService cartService = ApiClient.getClient().create(CartService.class);
+        Call<List<Cart>> call = CartRepo.getCartService().getCartsByUser(Integer.parseInt(userId));
+        call.enqueue(new Callback<List<Cart>>() {
+            @Override
+            public void onResponse(Call<List<Cart>> call, Response<List<Cart>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    cartItems.clear();
+                    cartItems.addAll(response.body());
+                    Log.d("ProductDetailFragment", "Loaded cart items: " + cartItems.size());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Cart>> call, Throwable t) {
+                Log.e("ProductDetailFragment", "Lỗi tải giỏ hàng: " + t.getMessage());
             }
         });
     }

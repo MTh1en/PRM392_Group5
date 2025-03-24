@@ -32,4 +32,5 @@ public interface UserService {
 
     @GET(USERS)
     Call<List<User>> loginGoogle(@Query("email") String email);
+
 }
