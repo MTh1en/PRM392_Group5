@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="8dp"
+    android:elevation="2dp">
+
+    <!-- Hình ảnh sản phẩm -->
+    <ImageView
+        android:id="@+id/ivProductImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_gallery" />
+
+    <!-- Thông tin đơn hàng -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="8dp">
+
+        <!-- Số thứ tự đơn hàng và ngày đặt hàng -->
+        <TextView
+            android:id="@+id/tvOrderIdDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Order #1 - 2025-03-24"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Tổng tiền -->
+        <TextView
+            android:id="@+id/tvTotalAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total: 0đ"
+            android:textSize="14sp" />
+
+        <!-- Payment Status -->
+        <TextView
+            android:id="@+id/tvPaymentStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Status: Pending"
+            android:textSize="14sp" />
+
+        <!-- Shipping Status -->
+        <TextView
+            android:id="@+id/tvShippingStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Shipping Status: Pending"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>
