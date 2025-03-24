@@ -13,19 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.final_project_group5.R;
 import com.example.final_project_group5.entity.Feedback;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.FeedbackViewHolder> {
     private Context context;
     private List<Feedback> feedbackList;
-    private Map<Integer, String> userMap; // Map để lưu userId -> username
 
-    public FeedbackAdapter(Context context, List<Feedback> feedbackList, Map<Integer, String> userMap) {
+    public FeedbackAdapter(Context context, List<Feedback> feedbackList) {
         this.context = context;
         this.feedbackList = feedbackList;
-        this.userMap = userMap != null ? userMap : new HashMap<>();
     }
 
     @NonNull
@@ -38,8 +34,6 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
     @Override
     public void onBindViewHolder(@NonNull FeedbackViewHolder holder, int position) {
         Feedback feedback = feedbackList.get(position);
-        String username = userMap.getOrDefault(feedback.getUserId(), "Unknown User");
-        holder.tvUserId.setText("User: " + username); // Hiển thị username thay vì userId
         holder.tvTitle.setText(feedback.getTitle());
         holder.tvComment.setText(feedback.getComment());
         holder.rbRating.setRating(feedback.getRating());
@@ -56,18 +50,13 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
         notifyDataSetChanged();
     }
 
-    public void updateUserMap(Map<Integer, String> newUserMap) {
-        this.userMap = newUserMap != null ? newUserMap : new HashMap<>();
-        notifyDataSetChanged();
-    }
 
     static class FeedbackViewHolder extends RecyclerView.ViewHolder {
-        TextView tvUserId, tvTitle, tvComment, tvCreateAt;
+        TextView tvTitle, tvComment, tvCreateAt;
         RatingBar rbRating;
 
         FeedbackViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvUserId = itemView.findViewById(R.id.tvUserId);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvComment = itemView.findViewById(R.id.tvComment);
             rbRating = itemView.findViewById(R.id.rbRating);
