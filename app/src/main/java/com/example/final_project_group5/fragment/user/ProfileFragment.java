@@ -189,6 +189,7 @@ public class ProfileFragment extends Fragment {
                         if (newPassword.equals(confirmPassword)) {
                             User updatePasswordUser = new User();
                             updatePasswordUser.setPassword(newPassword);
+                            updatePasswordUser.setActive(true);
                             UserRepo.getUserService().updateUser(userId, updatePasswordUser).enqueue(new Callback<User>() {
                                 @Override
                                 public void onResponse(Call<User> call, Response<User> response) {

@@ -68,10 +68,10 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
         // Hiển thị các thuộc tính của Order
         holder.tvOrderId.setText("Order ID: #" + order.getId());
         holder.tvOrderDate.setText("Order Date: " + order.getOrderDate());
-        holder.tvTotalAmount.setText("Total Amount: $" + String.format("%.2f", order.getTotalAmount()));
+        holder.tvTotalAmount.setText("Total Amount: " + String.format("%.0f", order.getTotalAmount())+" VND");
         holder.tvShippingAddress.setText("Shipping Address: " + order.getShippingAddress());
-        holder.tvShippingFee.setText("Shipping Fee: $" + String.format("%.2f", order.getShippingFee()));
-        holder.tvDiscountAmount.setText("Discount: $" + String.format("%.2f", order.getDiscountAmount()));
+        holder.tvShippingFee.setText("Shipping Fee: " + String.format("%.0f", order.getShippingFee())+" VND");
+        holder.tvDiscountAmount.setText("Discount: " + String.format("%.0f", order.getDiscountAmount())+" %");
         holder.tvPaymentStatus.setText("Payment Status: " + order.getPaymentStatus());
         holder.tvShippingStatus.setText("Shipping Status: " + order.getShippingStatus());
 
@@ -160,8 +160,8 @@ public class OrderAdapterAdmin extends RecyclerView.Adapter<OrderAdapterAdmin.Or
                 TextView tvDetail = new TextView(holder.itemView.getContext());
                 tvDetail.setText("- " + detail.getProductName() + "\n" +
                         "  Quantity: " + detail.getQuantity() + "\n" +
-                        "  Original Price: $" + String.format("%.2f", detail.getOriginalPrice()) + "\n" +
-                        "  Discounted Price: $" + String.format("%.2f", detail.getDiscountedPrice()) + "\n" +
+                        "  Original Price: " + String.format("%.0f", detail.getOriginalPrice()) +" VND"+ "\n" +
+                        "  Discounted Price: " + String.format("%.0f", detail.getDiscountedPrice())+" VND" + "\n" +
                         "  Description: " + detail.getProductDescription());
                 tvDetail.setTextSize(14);
                 tvDetail.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.black));

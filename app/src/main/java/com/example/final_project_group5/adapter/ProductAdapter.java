@@ -47,8 +47,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         // Hiển thị thông tin sản phẩm
         holder.tvProductName.setText(product.getName());
         holder.tvProductDescription.setText(product.getDescription());
-        holder.tvOriginalPrice.setText("$" + String.format("%.2f", product.getOriginalPrice()));
-        holder.tvDiscountedPriceAdmin.setText("$" + String.format("%.2f", product.getDiscountedPrice()));
+        holder.tvOriginalPrice.setText( String.format("%.0f", product.getOriginalPrice())+" VND" );
+        holder.tvDiscountedPriceAdmin.setText(  String.format("%.0f", product.getDiscountedPrice())+" VND");
         holder.tvDiscountPercentage.setText(product.getDiscountPercentage() + "% OFF");
         holder.tvAverageRating.setText(String.valueOf(product.getAverageRating()));
         holder.tvRatingCount.setText("(" + product.getRatingCount() + " reviews)");

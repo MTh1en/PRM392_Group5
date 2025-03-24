@@ -44,7 +44,7 @@ public class ProductAdapterHome extends RecyclerView.Adapter<ProductAdapterHome.
 
         // Hiển thị thông tin sản phẩm
         holder.tvProductName.setText(product.getName());
-        holder.tvDiscountedPrice.setText("$" + String.format("%.2f", product.getDiscountedPrice()));
+        holder.tvDiscountedPrice.setText(String.format("%.0f", product.getDiscountedPrice()) + " VND");
         holder.tvStock.setText("Stock: " + product.getStock());
 
         // Tải hình ảnh bằng Glide
